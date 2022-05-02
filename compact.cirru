@@ -13,13 +13,46 @@
                 cursor $ []
                 states $ :states store
               container ({})
-                text $ {} (:text "\"DEMO")
-                  :position $ [] 100 100
-                  :style $ {}
-                    :fill $ hslx 0 0 80
+                comp-moon-demo $ >> states :moon
       :ns $ quote
         ns app.comp.container $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >>
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.comp.moon-demo :refer $ comp-moon-demo
+    |app.comp.moon-demo $ {}
+      :defs $ {}
+        |comp-circle-demo $ quote
+          defn comp-circle-demo $
+        |comp-moon-demo $ quote
+          defn comp-moon-demo (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} $ :n 1
+              container ({})
+                mesh $ {}
+                  :position $ [] 100 100
+                  :geometry $ {}
+                    :attributes $ []
+                      {} (:id |aVertexPosition) (:size 2)
+                        :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                      {} (:id |aUvs) (:size 2)
+                        :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                    :index $ [] 0 1 2 0 3 2
+                  :shader $ {}
+                    :vertex-source $ inline-shader |moon.vert
+                    :fragment-source $ inline-shader |moon.frag
+                  :uniforms $ js-object
+                    :n $ :n state
+        |inline-shader $ quote
+          defmacro inline-shader (name)
+            read-file $ str "\"shaders/" name
+      :ns $ quote
+        ns app.comp.moon-demo $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
           phlox.comp.button :refer $ comp-button
           phlox.comp.drag-point :refer $ comp-drag-point
           respo-ui.core :as ui
