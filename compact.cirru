@@ -39,10 +39,12 @@
                     :attributes $ []
                       {} (:id |aVertexPosition) (:size 3)
                         :buffer $ concat &
-                          w-log $ ->
-                            [] ([] -40 -40 0) ([] 40 -40 0) ([] 40 40 0) ([] -40 40 0) ([] -40 -40 -40) ([] 40 -40 -40) ([] 40 40 -40) ([] -40 40 -40)
+                          ->
+                            [] ([] -40 -40 0) ([] 40 -40 0) ([] 40 40 0) ([] -40 40 0) ([] -40 -40 -80) ([] 40 -40 -80) ([] 40 40 -80) ([] -40 40 -80)
                             map move-x
+                            wo-log
                             map transform-3d
+                            wo-log
                     :index $ concat &
                       [] ([] 0 1) ([] 1 2) ([] 2 3) ([] 0 3) ([] 0 4) ([] 4 5) ([] 5 6) ([] 6 7) ([] 4 7) ([] 1 5) ([] 2 6) ([] 3 7)
                   :draw-mode :line-strip
@@ -54,26 +56,37 @@
         |move-x $ quote
           defn move-x (point)
             -> point
-              update 0 $ fn (x) (- x 20)
-              update 2 $ fn (z) (- z 100)
+              map $ fn (p) (* p 10)
+              update 0 $ fn (x) (+ x 0)
+              update 1 $ fn (y) (+ y 0)
+              update 2 $ fn (z) (- z 1000)
         |screen-vec $ quote
-          def screen-vec $ [] 0 0 -500
+          def screen-vec $ [] 200 200 -600
         |transform-3d $ quote
           defn transform-3d (point)
             let
                 x $ nth point 0
-                z $ negate (nth point 2)
+                y $ negate (nth point 1)
+                z $ nth point 2
                 a $ nth screen-vec 0
-                b $ negate (nth screen-vec 2)
-                sq-sum $ + (* a a) (* b b)
-                r $ /
-                  + (* a x) (* b z)
-                  , sq-sum
-                y' $ / (nth point 1) r
+                b $ negate (nth screen-vec 1)
+                c $ nth screen-vec 2
+                L2 $ + (* a a) (* c c)
+                L $ sqrt L2
+                r $ wo-log
+                  /
+                    + (* a x) (* c z)
+                    + (* a a) (* c c)
+                y' $ /
+                  *
+                    - y $ * b r
+                    sqrt $ + 1
+                      / (* b b) L2
+                  + r $ / y L2
                 z' $ negate r
                 x' $ /
-                  - (* x b) (* a z)
-                  , r (sqrt sq-sum)
+                  * L $ - (* z a) (* x c)
+                  + (* a x) (* c z)
               map ([] x' y' z')
                 fn (p) p
       :ns $ quote
