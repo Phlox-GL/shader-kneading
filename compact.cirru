@@ -13,7 +13,8 @@
                 cursor $ []
                 states $ :states store
               container ({})
-                comp-moon-demo $ >> states :moon
+                ; comp-moon-demo $ >> states :moon
+                comp-fake-3d $ >> states :fake-3d
       :ns $ quote
         ns app.comp.container $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >>
@@ -22,6 +23,67 @@
           respo-ui.core :as ui
           memof.alias :refer $ memof-call
           app.comp.moon-demo :refer $ comp-moon-demo
+          app.comp.fake-3d :refer $ comp-fake-3d
+    |app.comp.fake-3d $ {}
+      :defs $ {}
+        |comp-fake-3d $ quote
+          defn comp-fake-3d (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} $ :n 1
+              container ({})
+                mesh $ {}
+                  :position $ [] 100 100
+                  :geometry $ {}
+                    :attributes $ []
+                      {} (:id |aVertexPosition) (:size 3)
+                        :buffer $ concat &
+                          w-log $ ->
+                            [] ([] -40 -40 0) ([] 40 -40 0) ([] 40 40 0) ([] -40 40 0) ([] -40 -40 -40) ([] 40 -40 -40) ([] 40 40 -40) ([] -40 40 -40)
+                            map move-x
+                            map transform-3d
+                    :index $ concat &
+                      [] ([] 0 1) ([] 1 2) ([] 2 3) ([] 0 3) ([] 0 4) ([] 4 5) ([] 5 6) ([] 6 7) ([] 4 7) ([] 1 5) ([] 2 6) ([] 3 7)
+                  :draw-mode :line-strip
+                  :shader $ {}
+                    :vertex-source $ inline-shader |fake-3d.vert
+                    :fragment-source $ inline-shader |fake-3d.frag
+                  :uniforms $ js-object
+                    :n $ :n state
+        |move-x $ quote
+          defn move-x (point)
+            -> point
+              update 0 $ fn (x) (- x 20)
+              update 2 $ fn (z) (- z 100)
+        |screen-vec $ quote
+          def screen-vec $ [] 0 0 -500
+        |transform-3d $ quote
+          defn transform-3d (point)
+            let
+                x $ nth point 0
+                z $ negate (nth point 2)
+                a $ nth screen-vec 0
+                b $ negate (nth screen-vec 2)
+                sq-sum $ + (* a a) (* b b)
+                r $ /
+                  + (* a x) (* b z)
+                  , sq-sum
+                y' $ / (nth point 1) r
+                z' $ negate r
+                x' $ /
+                  - (* x b) (* a z)
+                  , r (sqrt sq-sum)
+              map ([] x' y' z')
+                fn (p) p
+      :ns $ quote
+        ns app.comp.fake-3d $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
     |app.comp.moon-demo $ {}
       :defs $ {}
         |comp-circle-demo $ quote
@@ -47,9 +109,6 @@
                     :fragment-source $ inline-shader |moon.frag
                   :uniforms $ js-object
                     :n $ :n state
-        |inline-shader $ quote
-          defmacro inline-shader (name)
-            read-file $ str "\"shaders/" name
       :ns $ quote
         ns app.comp.moon-demo $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
@@ -57,8 +116,12 @@
           phlox.comp.drag-point :refer $ comp-drag-point
           respo-ui.core :as ui
           memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
     |app.config $ {}
       :defs $ {}
+        |inline-shader $ quote
+          defmacro inline-shader (name)
+            read-file $ str "\"shaders/" name
         |site $ quote
           def site $ {} (:dev-ui "\"http://localhost:8100/main.css") (:release-ui "\"http://cdn.tiye.me/favored-fonts/main.css") (:cdn-url "\"http://cdn.tiye.me/phlox/") (:title "\"Phlox") (:icon "\"http://cdn.tiye.me/logo/quamolit.png") (:storage-key "\"phlox")
       :ns $ quote
