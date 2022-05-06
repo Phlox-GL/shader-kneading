@@ -12,9 +12,21 @@
             let
                 cursor $ []
                 states $ :states store
+                tab $ either (:tab store) :fake-3d
               container ({})
-                ; comp-moon-demo $ >> states :moon
-                comp-fake-3d $ >> states :fake-3d
+                case-default tab
+                  text $ {}
+                    :text $ str "\"Unknown tab:" tab
+                    :position $ [] 1 1
+                    :style $ {} (:fill |red) (:font-size 16) (:font-family |Hind)
+                  :moon $ comp-moon-demo (>> states :moon)
+                  :fake-3d $ comp-fake-3d (>> states :fake-3d)
+                  :isohypse $ comp-isohypse (>> states :isohypse)
+                comp-tabs
+                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse")
+                  , tab
+                    {} $ :position ([] -400 -300)
+                    fn (t d!) (d! :tab t)
       :ns $ quote
         ns app.comp.container $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >>
@@ -24,6 +36,8 @@
           memof.alias :refer $ memof-call
           app.comp.moon-demo :refer $ comp-moon-demo
           app.comp.fake-3d :refer $ comp-fake-3d
+          phlox.comp.tabs :refer $ comp-tabs
+          app.comp.isohypse :refer $ comp-isohypse
     |app.comp.fake-3d $ {}
       :defs $ {}
         |comp-fake-3d $ quote
@@ -32,27 +46,26 @@
                 cursor $ :cursor states
                 state $ or (:data states)
                   {} $ :n 1
-              container ({})
-                mesh $ {}
-                  :position $ [] 0 0 
-                  :geometry $ {}
-                    :attributes $ []
-                      {} (:id |aVertexPosition) (:size 3)
-                        :buffer $ concat &
-                          ->
-                            [] ([] -40 -40 0) ([] 40 -40 0) ([] 40 40 0) ([] -40 40 0) ([] -40 -40 -80) ([] 40 -40 -80) ([] 40 40 -80) ([] -40 40 -80)
-                            map move-x
-                            wo-log
-                            map transform-3d
-                            wo-log
-                    :index $ concat &
-                      [][] (0 1) (1 2) (2 3) (0 3) (0 4) (4 5) (5 6) (6 7) (4 7) (1 5) (2 6) (3 7)
-                  :draw-mode :line-strip
-                  :shader $ {}
-                    :vertex-source $ inline-shader |fake-3d.vert
-                    :fragment-source $ inline-shader |fake-3d.frag
-                  :uniforms $ js-object
-                    :n $ :n state
+              mesh $ {}
+                :position $ [] 0 0 
+                :geometry $ {}
+                  :attributes $ []
+                    {} (:id |aVertexPosition) (:size 3)
+                      :buffer $ concat &
+                        ->
+                          [] ([] -40 -40 0) ([] 40 -40 0) ([] 40 40 0) ([] -40 40 0) ([] -40 -40 -80) ([] 40 -40 -80) ([] 40 40 -80) ([] -40 40 -80)
+                          map move-x
+                          wo-log
+                          map transform-3d
+                          wo-log
+                  :index $ concat &
+                    [][] (0 1) (1 2) (2 3) (0 3) (0 4) (4 5) (5 6) (6 7) (4 7) (1 5) (2 6) (3 7)
+                :draw-mode :line-strip
+                :shader $ {}
+                  :vertex-source $ inline-shader |fake-3d.vert
+                  :fragment-source $ inline-shader |fake-3d.frag
+                :uniforms $ js-object
+                  :n $ :n state
         |move-x $ quote
           defn move-x (point)
             -> point
@@ -113,6 +126,37 @@
           respo-ui.core :as ui
           memof.alias :refer $ memof-call
           app.config :refer $ inline-shader
+    |app.comp.isohypse $ {}
+      :defs $ {}
+        |comp-isohypse $ quote
+          defn comp-isohypse (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} $ :n 1
+              mesh $ {}
+                :position $ [] 100 100
+                :geometry $ {}
+                  :attributes $ []
+                    {} (:id |aVertexPosition) (:size 2)
+                      :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                    {} (:id |aUvs) (:size 2)
+                      :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                  :index $ [] 0 1 2 0 3 2
+                :shader $ {}
+                  :vertex-source $ inline-shader |isohypse.vert
+                  :fragment-source $ inline-shader |isohypse.frag
+                :draw-mode :triangles
+                :uniforms $ js-object
+                  :n $ :n state
+      :ns $ quote
+        ns app.comp.isohypse $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
     |app.comp.moon-demo $ {}
       :defs $ {}
         |comp-circle-demo $ quote
@@ -123,21 +167,21 @@
                 cursor $ :cursor states
                 state $ or (:data states)
                   {} $ :n 1
-              container ({})
-                mesh $ {}
-                  :position $ [] 100 100
-                  :geometry $ {}
-                    :attributes $ []
-                      {} (:id |aVertexPosition) (:size 2)
-                        :buffer $ [] -400 -400 400 -400 400 400 -400 400
-                      {} (:id |aUvs) (:size 2)
-                        :buffer $ [] -1 -1 1 -1 1 1 -1 1
-                    :index $ [] 0 1 2 0 3 2
-                  :shader $ {}
-                    :vertex-source $ inline-shader |moon.vert
-                    :fragment-source $ inline-shader |moon.frag
-                  :uniforms $ js-object
-                    :n $ :n state
+              mesh $ {}
+                :position $ [] 100 100
+                :geometry $ {}
+                  :attributes $ []
+                    {} (:id |aVertexPosition) (:size 2)
+                      :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                    {} (:id |aUvs) (:size 2)
+                      :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                  :index $ [] 0 1 2 0 3 2
+                :shader $ {}
+                  :vertex-source $ inline-shader |moon.vert
+                  :fragment-source $ inline-shader |moon.frag
+                :draw-mode :triangles
+                :uniforms $ js-object
+                  :n $ :n state
       :ns $ quote
         ns app.comp.moon-demo $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
@@ -202,7 +246,7 @@
     |app.schema $ {}
       :defs $ {}
         |store $ quote
-          def store $ {} (:tab :drafts) (:x 0) (:keyboard-on? false) (:counted 0)
+          def store $ {} (:tab nil)
             :states $ {}
             :cursor $ []
       :ns $ quote (ns app.schema)
@@ -212,12 +256,7 @@
           defn updater (store op op-data op-id op-time)
             case-default op
               do (println "\"unknown op" op op-data) store
-              :add-x $ update store :x
-                fn (x)
-                  if (> x 10) 0 $ + x 1
               :tab $ assoc store :tab op-data
-              :toggle-keyboard $ update store :keyboard-on? not
-              :counted $ update store :counted inc
               :states $ update-states store op-data
               :hydrate-storage op-data
       :ns $ quote
