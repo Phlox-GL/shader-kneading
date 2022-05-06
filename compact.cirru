@@ -34,7 +34,7 @@
                   {} $ :n 1
               container ({})
                 mesh $ {}
-                  :position $ [] 100 100
+                  :position $ [] 0 0 
                   :geometry $ {}
                     :attributes $ []
                       {} (:id |aVertexPosition) (:size 3)
@@ -46,7 +46,7 @@
                             map transform-3d
                             wo-log
                     :index $ concat &
-                      [] ([] 0 1) ([] 1 2) ([] 2 3) ([] 0 3) ([] 0 4) ([] 4 5) ([] 5 6) ([] 6 7) ([] 4 7) ([] 1 5) ([] 2 6) ([] 3 7)
+                      [][] (0 1) (1 2) (2 3) (0 3) (0 4) (4 5) (5 6) (6 7) (4 7) (1 5) (2 6) (3 7)
                   :draw-mode :line-strip
                   :shader $ {}
                     :vertex-source $ inline-shader |fake-3d.vert
@@ -56,39 +56,55 @@
         |move-x $ quote
           defn move-x (point)
             -> point
-              map $ fn (p) (* p 10)
+              map $ fn (p) (* p 2)
               update 0 $ fn (x) (+ x 0)
               update 1 $ fn (y) (+ y 0)
-              update 2 $ fn (z) (- z 1000)
+              update 2 $ fn (z) (- z 1200)
         |screen-vec $ quote
-          def screen-vec $ [] 200 200 -600
+          def screen-vec $ [] 120 50 -600
+        |square $ quote
+          defn square (x) (&* x x)
+        |sum-squares $ quote
+          defn sum-squares (a b)
+            &+ (&* a a) (&* b b)
         |transform-3d $ quote
           defn transform-3d (point)
             let
+                ; look-distance $ wo-log (new-lookat-point)
+                ; look-distance screen-vec
+                s $ noted "\"back size of light cone?" 2
                 x $ nth point 0
-                y $ negate (nth point 1)
+                y $ nth point 1
                 z $ nth point 2
                 a $ nth screen-vec 0
-                b $ negate (nth screen-vec 1)
+                b $ nth screen-vec 1
                 c $ nth screen-vec 2
-                L2 $ + (* a a) (* c c)
-                L $ sqrt L2
-                r $ wo-log
+                r $ /
+                  + (* a x) (* b y) (* c z)
+                  + (square a) (square b) (square c)
+                q $ / (+ s 1) (+ r s)
+                L1 $ sqrt
+                  + (* a a b b)
+                    square $ sum-squares a c
+                    * b b c c
+                y' $ *
                   /
-                    + (* a x) (* c z)
-                    + (* a a) (* c c)
-                y' $ /
-                  *
-                    - y $ * b r
-                    sqrt $ + 1
-                      / (* b b) L2
-                  + r $ / y L2
+                    + (* q y) (* b q s) (* -1 b s) (* -1 b)
+                    sum-squares a c
+                  , L1
+                x' $ *
+                  /
+                    -
+                      + (* q x) (* a q s) (* -1 s a) (* -1 a)
+                      * y' $ / (* -1 a b) L1
+                    , c -1
+                  sqrt $ sum-squares a c
                 z' $ negate r
-                x' $ /
-                  * L $ - (* z a) (* x c)
-                  + (* a x) (* c z)
-              map ([] x' y' z')
-                fn (p) p
+              ; println $ [] x' y' z'
+              -> ([] x' y' z')
+                ; update 1 $ fn (v)
+                  -> v (/ js/window.innerHeight) (* js/window.innerWidth)
+                map $ fn (p) p
       :ns $ quote
         ns app.comp.fake-3d $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
