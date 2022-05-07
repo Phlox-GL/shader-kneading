@@ -12,20 +12,23 @@
             let
                 cursor $ []
                 states $ :states store
-                tab $ either (:tab store) :fake-3d
+                tab $ either (:tab store) :star-link
               container ({})
                 case-default tab
                   text $ {}
-                    :text $ str "\"Unknown tab:" tab
+                    :text $ str "\"Unknown tab " tab
                     :position $ [] 1 1
-                    :style $ {} (:fill |red) (:font-size 16) (:font-family |Hind)
+                    :style $ {} (:font-size 32) (:font-family "|Josefin Sans")
+                      :fill $ hslx 10 100 70
                   :moon $ comp-moon-demo (>> states :moon)
                   :fake-3d $ comp-fake-3d (>> states :fake-3d)
                   :isohypse $ comp-isohypse (>> states :isohypse)
+                  :star-trail $ comp-star-trail
+                  :star-link $ comp-star-link
                 comp-tabs
-                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse")
+                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail")
                   , tab
-                    {} $ :position ([] -400 -300)
+                    {} $ :position ([] -408 -300)
                     fn (t d!) (d! :tab t)
       :ns $ quote
         ns app.comp.container $ :require
@@ -38,6 +41,7 @@
           app.comp.fake-3d :refer $ comp-fake-3d
           phlox.comp.tabs :refer $ comp-tabs
           app.comp.isohypse :refer $ comp-isohypse
+          app.comp.star-trail :refer $ comp-star-trail comp-star-link
     |app.comp.fake-3d $ {}
       :defs $ {}
         |comp-fake-3d $ quote
@@ -159,8 +163,6 @@
           app.config :refer $ inline-shader
     |app.comp.moon-demo $ {}
       :defs $ {}
-        |comp-circle-demo $ quote
-          defn comp-circle-demo $
         |comp-moon-demo $ quote
           defn comp-moon-demo (states)
             let
@@ -184,6 +186,48 @@
                   :n $ :n state
       :ns $ quote
         ns app.comp.moon-demo $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
+    |app.comp.star-trail $ {}
+      :defs $ {}
+        |comp-star-link $ quote
+          defn comp-star-link () (; "\"stars however in 2D space")
+            mesh $ {}
+              :position $ [] 100 100
+              :geometry $ {}
+                :attributes $ []
+                  {} (:id |aVertexPosition) (:size 2)
+                    :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                  {} (:id |aUvs) (:size 2)
+                    :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                :index $ [] 0 1 2 0 3 2
+              :shader $ {}
+                :vertex-source $ inline-shader |star-link.vert
+                :fragment-source $ inline-shader |star-link.frag
+              :draw-mode :triangles
+              :uniforms $ js-object
+        |comp-star-trail $ quote
+          defn comp-star-trail () $ mesh
+            {}
+              :position $ [] 100 100
+              :geometry $ {}
+                :attributes $ []
+                  {} (:id |aVertexPosition) (:size 2)
+                    :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                  {} (:id |aUvs) (:size 2)
+                    :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                :index $ [] 0 1 2 0 3 2
+              :shader $ {}
+                :vertex-source $ inline-shader |star-trail.vert
+                :fragment-source $ inline-shader |star-trail.frag
+              :draw-mode :triangles
+              :uniforms $ js-object
+      :ns $ quote
+        ns app.comp.star-trail $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
           phlox.comp.button :refer $ comp-button
           phlox.comp.drag-point :refer $ comp-drag-point
