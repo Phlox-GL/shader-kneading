@@ -12,7 +12,7 @@
             let
                 cursor $ []
                 states $ :states store
-                tab $ either (:tab store) :star-link
+                tab $ either (:tab store) :star-trail
               container ({})
                 case-default tab
                   text $ {}

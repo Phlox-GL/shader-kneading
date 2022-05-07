@@ -52,7 +52,7 @@
                                 :data $ {}
                                   |T $ {} (:at 1651861708838) (:by |rJG4IHzWf) (:text |:tab) (:type :leaf)
                                   |b $ {} (:at 1651861709479) (:by |rJG4IHzWf) (:text |store) (:type :leaf)
-                              |b $ {} (:at 1651892135447) (:by |rJG4IHzWf) (:text |:star-link) (:type :leaf)
+                              |b $ {} (:at 1651913170602) (:by |rJG4IHzWf) (:text |:star-trail) (:type :leaf)
                   |T $ {} (:at 1574353986671) (:by |rJG4IHzWf) (:type :expr)
                     :data $ {}
                       |D $ {} (:at 1574353987962) (:by |rJG4IHzWf) (:text |container) (:type :leaf)
