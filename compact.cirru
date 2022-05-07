@@ -23,7 +23,7 @@
                   :moon $ comp-moon-demo (>> states :moon)
                   :fake-3d $ comp-fake-3d (>> states :fake-3d)
                   :isohypse $ comp-isohypse (>> states :isohypse)
-                  :star-trail $ comp-star-trail
+                  :star-trail $ comp-star-trail (>> states :star-trail)
                   :star-link $ comp-star-link
                 comp-tabs
                   [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail")
@@ -211,21 +211,30 @@
               :draw-mode :triangles
               :uniforms $ js-object
         |comp-star-trail $ quote
-          defn comp-star-trail () $ mesh
-            {}
-              :position $ [] 100 100
-              :geometry $ {}
-                :attributes $ []
-                  {} (:id |aVertexPosition) (:size 2)
-                    :buffer $ [] -400 -400 400 -400 400 400 -400 400
-                  {} (:id |aUvs) (:size 2)
-                    :buffer $ [] -1 -1 1 -1 1 1 -1 1
-                :index $ [] 0 1 2 0 3 2
-              :shader $ {}
-                :vertex-source $ inline-shader |star-trail.vert
-                :fragment-source $ inline-shader |star-trail.frag
-              :draw-mode :triangles
-              :uniforms $ js-object
+          defn comp-star-trail (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} $ :t 0
+              mesh $ {}
+                :position $ [] 100 100
+                :geometry $ {}
+                  :attributes $ []
+                    {} (:id |aVertexPosition) (:size 2)
+                      :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                    {} (:id |aUvs) (:size 2)
+                      :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                  :index $ [] 0 1 2 0 3 2
+                :shader $ {}
+                  :vertex-source $ inline-shader |star-trail.vert
+                  :fragment-source $ inline-shader |star-trail.frag
+                :draw-mode :triangles
+                :uniforms $ js-object
+                  :uTime $ wo-log
+                    / (js/performance.now) 1000
+                :on $ {}
+                  :pointermove $ fn (e d!)
+                    d! cursor $ update state :t inc
       :ns $ quote
         ns app.comp.star-trail $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
