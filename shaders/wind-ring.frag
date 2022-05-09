@@ -32,48 +32,55 @@ vec3 hsv2rgb(vec3 c)
 }
 
 
+// Simplex 2D noise
+//
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+
 void main() {
     vec2 uv = vUvs;
-    vec2 points[limit];
 
-    vec3 color = vec3(0.0);
+    float wind_light = 0.0;
 
-    for (int i = 0; i < limit; i++) {
-        vec2 point = vec2(rand_balanced(vec2(i+10, 0)), rand_balanced(vec2(i, 1+90))) * vec2(0.8, 0.8);
-        points[i] = point;
+    float r = length(uv - snoise(uv * vec2(0.8, 1.1)) * vec2(0.01, 0.01));
+    float angle = atan(uv.y, uv.x);
+    vec2 ring_ar = vec2(angle - u_time * 0.8, r);
+    vec2 grow_ar = vec2(angle, r + u_time * 20.);
 
-        float point_angle = atan(point.y, point.x);
-        float point_len = length(point);
-
-        float uv_angle = atan(uv.y, uv.x) + (u_time * (rand(vec2(point_len, point_len)) + 0.2));
-        uv_angle = uv_angle - floor(uv_angle / (2.0 * PI)) * 2.0 * PI;
-        float uv_len = length(uv);
-
-        float angle_delta = point_angle - uv_angle;
-
-        if (angle_delta < 0.) {
-            angle_delta += 2.0 * PI;
-        } else if (angle_delta > 2.0 * PI) {
-            angle_delta -= 2.0 * PI;
-        }
-
-        float len_delta = point_len - uv_len;
-
-        if (abs(len_delta) < 0.0080 * (angle_delta + 0.4) * point_len / 0.16 && angle_delta * point_len < 0.62) {
-            float diff_ratio = abs(len_delta) / (0.0008 * (angle_delta + 0.4) * point_len / 0.16);
-            float color_v = rand(point) / 2.;
-            // float strength = smoothstep(1., 0., diff_ratio*0.03);
-            float strength = 0.8;
-            // color = mix(color, vec3((1.0 - color_v)*strength, color_v * strength, (1.0-color_v)*strength), 0.99);
-            // color += vec3(1.2 - color_v, 0.7 + color_v, 0.5 + (1.2-color_v)) * vec3(strength, strength, 0.9*strength);
-            float d = normal_distribution(diff_ratio * 0.2, 0.0, 2.) * 0.3;
-            color += hsv2rgb(vec3(rand(point), 0.6, (rand(uv)+0.5)*d ));
-
-            float d2 = normal_distribution(diff_ratio * 2., 0.0, 2.) * 4.;
-            color += hsv2rgb(vec3(rand(point), 0.4, (rand(point)+0.2)*d2 ));
-
-        }
+    if (abs((r - 0.6)) <= 0.02 + snoise((ring_ar + + vec2(1.1, 1.1))) * 0.01) {
+        wind_light += 0.5 + 0.2 * snoise(ring_ar * vec2(1.5, 30.));
     }
 
-    gl_FragColor = vec4(color, 1.0);
+    if (r > 0.58 && r < (0.8 + 0.2 * snoise(grow_ar * vec2(2.0, 0.08)))) {
+        wind_light += (0.1 + 20.4 * pow(snoise(grow_ar * vec2(8., 0.2)), 8.0)) * snoise(grow_ar * vec2(600., 600.));
+    }
+
+    gl_FragColor = vec4(wind_light, wind_light, wind_light, 1.0);
 }

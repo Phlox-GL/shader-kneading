@@ -174,7 +174,11 @@
                   :fragment-source $ inline-shader |wind-ring.frag
                 :draw-mode :triangles
                 :uniforms $ js-object
-                  :n $ :n state
+                  :uTime $ wo-log
+                    / (js/performance.now) 1000
+                :on $ {}
+                  :pointermove $ fn (e d!)
+                    d! cursor $ update state :t inc
       :ns $ quote
         ns app.comp.isohypse $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
