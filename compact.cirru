@@ -25,8 +25,9 @@
                   :isohypse $ comp-isohypse (>> states :isohypse)
                   :star-trail $ comp-star-trail (>> states :star-trail)
                   :star-link $ comp-star-link
+                  :wind-ring $ comp-wind-ring states
                 comp-tabs
-                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail")
+                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring")
                   , tab
                     {} $ :position ([] -408 -300)
                     fn (t d!) (d! :tab t)
@@ -40,7 +41,7 @@
           app.comp.moon-demo :refer $ comp-moon-demo
           app.comp.fake-3d :refer $ comp-fake-3d
           phlox.comp.tabs :refer $ comp-tabs
-          app.comp.isohypse :refer $ comp-isohypse
+          app.comp.isohypse :refer $ comp-isohypse comp-wind-ring
           app.comp.star-trail :refer $ comp-star-trail comp-star-link
     |app.comp.fake-3d $ {}
       :defs $ {}
@@ -153,6 +154,31 @@
                 :draw-mode :triangles
                 :uniforms $ js-object
                   :n $ :n state
+        |comp-wind-ring $ quote
+          defn comp-wind-ring (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} $ :n 1
+              mesh $ {}
+                :position $ [] 100 100
+                :geometry $ {}
+                  :attributes $ []
+                    {} (:id |aVertexPosition) (:size 2)
+                      :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                    {} (:id |aUvs) (:size 2)
+                      :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                  :index $ [] 0 1 2 0 3 2
+                :shader $ {}
+                  :vertex-source $ inline-shader |wind-ring.vert
+                  :fragment-source $ inline-shader |wind-ring.frag
+                :draw-mode :triangles
+                :uniforms $ js-object
+                  :uTime $ wo-log
+                    / (js/performance.now) 1000
+                :on $ {}
+                  :pointermove $ fn (e d!)
+                    d! cursor $ update state :t inc
       :ns $ quote
         ns app.comp.isohypse $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
