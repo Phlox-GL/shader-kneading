@@ -65,9 +65,9 @@ float normal_distribution(float d, float sigma) {
   return exp(-0.5 * square(d) / square(sigma)) / sigma / sqrt(2.0 * PI);
 }
 
-vec2 bend(vec2 p, vec2 center, float radian) {
+vec2 bend(vec2 p, vec2 center, float radian, float sigma, float amplitude) {
     vec2 d = p - center;
-    float dyn_radian = radian * normal_distribution(length(d), 0.2) * 0.7;
+    float dyn_radian = radian * normal_distribution(length(d), sigma) * amplitude;
     vec2 rot = vec2(
         cos(dyn_radian),
         sin(dyn_radian)
@@ -90,8 +90,9 @@ void main() {
     vec2 xy = vUvs;
 
     xy = swipe(xy, vec2(-0.5, -0.5), vec2(4.0, 4.0));
-    xy = bend(xy, vec2(0.6, 0.6), PI * 1.0);
-    xy = bend(xy, vec2(0.0, 0.0), PI * 0.2);
+    xy = swipe(xy, vec2(0.0, 0.0), vec2(0.0, 8.0));
+    xy = bend(xy, vec2(0.0, 0.0), PI * 40.0, 0.2, 0.1);
+    xy = bend(xy, vec2(0.5, 0.5), PI * 20.0, 0.1, 1.0);
 
     float scale = 20.0;
     float bound = 0.9;
