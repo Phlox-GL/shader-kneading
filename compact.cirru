@@ -4,6 +4,37 @@
     :modules $ [] |memof/ |lilac/ |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/
   :entries $ {}
   :files $ {}
+    |app.comp.bending $ {}
+      :defs $ {}
+        |comp-bending $ quote
+          defn comp-bending (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} $ :n 1
+              mesh $ {}
+                :position $ [] 100 100
+                :geometry $ {}
+                  :attributes $ []
+                    {} (:id |aVertexPosition) (:size 2)
+                      :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                    {} (:id |aUvs) (:size 2)
+                      :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                  :index $ [] 0 1 2 0 3 2
+                :shader $ {}
+                  :vertex-source $ inline-shader |bending.vert
+                  :fragment-source $ inline-shader |bending.frag
+                :draw-mode :triangles
+                :uniforms $ js-object
+                  :n $ :n state
+      :ns $ quote
+        ns app.comp.bending $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
     |app.comp.container $ {}
       :defs $ {}
         |comp-container $ quote
@@ -25,9 +56,10 @@
                   :isohypse $ comp-isohypse (>> states :isohypse)
                   :star-trail $ comp-star-trail (>> states :star-trail)
                   :star-link $ comp-star-link
-                  :wind-ring $ comp-wind-ring states
+                  :wind-ring $ comp-wind-ring (>> states :wind-ring)
+                  :bending $ comp-bending (>> states :bending)
                 comp-tabs
-                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring")
+                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring") ([] :bending "\"Bending")
                   , tab
                     {} $ :position ([] -408 -300)
                     fn (t d!) (d! :tab t)
@@ -43,6 +75,7 @@
           phlox.comp.tabs :refer $ comp-tabs
           app.comp.isohypse :refer $ comp-isohypse comp-wind-ring
           app.comp.star-trail :refer $ comp-star-trail comp-star-link
+          app.comp.bending :refer $ comp-bending
     |app.comp.fake-3d $ {}
       :defs $ {}
         |comp-fake-3d $ quote
@@ -296,7 +329,7 @@
             -> (new FontFaceObserver "\"Josefin Sans") (.!load)
               .!then $ fn (event) (render-app!)
             add-watch *store :change $ fn (store prev) (render-app!)
-            render-control!
+            when mobile? $ render-control!
             start-control-loop! 8 on-control-event
             println "\"App Started"
         |reload! $ quote
@@ -304,7 +337,7 @@
             do (clear-phlox-caches!) (remove-watch *store :change)
               add-watch *store :change $ fn (store prev) (render-app!)
               render-app!
-              replace-control-loop! 8 on-control-event
+              when mobile? $ replace-control-loop! 8 on-control-event
               hud! "\"ok~" "\"Ok"
             hud! "\"error" build-errors
         |render-app! $ quote
