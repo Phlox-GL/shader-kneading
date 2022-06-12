@@ -58,8 +58,9 @@
                   :star-link $ comp-star-link
                   :wind-ring $ comp-wind-ring (>> states :wind-ring)
                   :bending $ comp-bending (>> states :bending)
+                  :kaleidoscope $ comp-kaleidoscope (>> states :kaleidoscope)
                 comp-tabs
-                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring") ([] :bending "\"Bending")
+                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring") ([] :bending "\"Bending") ([] :kaleidoscope "\"Kaleidoscope")
                   , tab
                     {} $ :position ([] -408 -300)
                     fn (t d!) (d! :tab t)
@@ -76,6 +77,7 @@
           app.comp.isohypse :refer $ comp-isohypse comp-wind-ring
           app.comp.star-trail :refer $ comp-star-trail comp-star-link
           app.comp.bending :refer $ comp-bending
+          app.comp.kaleidoscope :refer $ comp-kaleidoscope
     |app.comp.fake-3d $ {}
       :defs $ {}
         |comp-fake-3d $ quote
@@ -220,6 +222,67 @@
           respo-ui.core :as ui
           memof.alias :refer $ memof-call
           app.config :refer $ inline-shader
+    |app.comp.kaleidoscope $ {}
+      :defs $ {}
+        |comp-kaleidoscope $ quote
+          defn comp-kaleidoscope (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} (:n 1)
+                    :shift $ [] 0 0
+                    :scale 0.1
+                shift $ :shift state
+              group ({})
+                mesh $ {}
+                  :position $ [] 100 100
+                  :geometry $ {}
+                    :attributes $ []
+                      {} (:id |aVertexPosition) (:size 2)
+                        :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                      {} (:id |aUvs) (:size 2)
+                        :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                    :index $ [] 0 1 2 0 3 2
+                  :shader $ {}
+                    :vertex-source $ inline-shader |kaleidoscope.vert
+                    :fragment-source $ inline-shader |kaleidoscope.frag
+                  :draw-mode :triangles
+                  :uniforms $ js-object
+                    :n $ :n state
+                    :shift $ js-array
+                      * 0.01 $ nth shift 0
+                      * 0.01 $ nth shift 1
+                    :colorTexture $ .!from PIXI/Texture "\"/assets/colorful-window.jpeg"
+                    :scale $ :scale state
+                comp-drag-point (>> states :p3)
+                  {} (:position shift) (:unit 1.0) (:radius 6)
+                    :fill $ hslx 0 90 100
+                    ; :color $ hslx 0 90 100
+                    :alpha 1
+                    :hide-text? true
+                    :on-change $ fn (position d!)
+                      d! cursor $ assoc state :shift position
+                comp-slider (>> states :scale)
+                  {}
+                    :value $ :scale state
+                    :unit 0.01
+                    :min 0.001
+                    :max 1.0
+                    :position $ [] 20 -360
+                    :fill $ hslx 50 90 70
+                    :color $ hslx 200 90 30
+                    :on-change $ fn (value d!)
+                      d! cursor $ assoc state :scale value
+      :ns $ quote
+        ns app.comp.kaleidoscope $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          phlox.comp.slider :refer $ comp-slider
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
+          "\"pixi.js" :as PIXI
     |app.comp.moon-demo $ {}
       :defs $ {}
         |comp-moon-demo $ quote
