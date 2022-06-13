@@ -1969,7 +1969,7 @@
                                             :data $ {}
                                               |D $ {} (:at 1655068540421) (:by |rJG4IHzWf) (:text |.!from) (:type :leaf)
                                               |T $ {} (:at 1655068703646) (:by |rJG4IHzWf) (:text |PIXI/Texture) (:type :leaf)
-                                              |b $ {} (:at 1655078353484) (:by |rJG4IHzWf) (:text "|\"/assets/bricks.jpeg") (:type :leaf)
+                                              |b $ {} (:at 1655078927273) (:by |rJG4IHzWf) (:text "|\"./assets/bricks.jpeg") (:type :leaf)
                                       |o $ {} (:at 1655069623037) (:by |rJG4IHzWf) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1655069624128) (:by |rJG4IHzWf) (:text |:scale) (:type :leaf)

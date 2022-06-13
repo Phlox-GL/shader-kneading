@@ -254,7 +254,7 @@
                     :shift $ js-array
                       * 0.01 $ nth shift 0
                       * 0.01 $ nth shift 1
-                    :colorTexture $ .!from PIXI/Texture "\"/assets/bricks.jpeg"
+                    :colorTexture $ .!from PIXI/Texture "\"./assets/bricks.jpeg"
                     :scale $ :scale state
                     :parts $ :parts state
                     :radius $ :radius state
