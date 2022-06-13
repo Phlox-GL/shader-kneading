@@ -43,7 +43,7 @@
             let
                 cursor $ []
                 states $ :states store
-                tab $ either (:tab store) :star-trail
+                tab $ either (:tab store) :kaleidoscope
               container ({})
                 case-default tab
                   text $ {}
@@ -231,8 +231,8 @@
                 state $ or (:data states)
                   {} (:n 1)
                     :shift $ [] 0 0
-                    :scale 0.1
-                    :parts 1
+                    :scale 1
+                    :parts 1.99
                     :radius 0.8
                 shift $ :shift state
               group ({})
@@ -254,7 +254,11 @@
                     :shift $ js-array
                       * 0.01 $ nth shift 0
                       * 0.01 $ nth shift 1
-                    :colorTexture $ .!from PIXI/Texture "\"./assets/bricks.jpeg"
+                    :colorTexture $ .!from PIXI/Texture
+                      if
+                        blank? $ .-src file-image
+                        , "\"./assets/bricks.jpeg" $ .-src file-image
+                    ; :color2Texture $ .!from PIXI/Texture "\"./assets/orange-flower.jpeg"
                     :scale $ :scale state
                     :parts $ :parts state
                     :radius $ :radius state
@@ -267,7 +271,7 @@
                     :on-change $ fn (position d!)
                       d! cursor $ assoc state :shift position
                 comp-slider (>> states :scale)
-                  {} (:title "\"scale") (:unit 0.01) (:min 0.001) (:max 1.0)
+                  {} (:title "\"scale") (:unit 0.01) (:min 0.001) (:max 2.0)
                     :position $ [] 20 -360
                     :fill $ hslx 50 90 70
                     :color $ hslx 200 90 30
@@ -290,6 +294,31 @@
                     :value $ :radius state
                     :on-change $ fn (value d!)
                       d! cursor $ assoc state :radius value
+        |file-image $ quote
+          def file-image $ let
+              img $ new js/Image
+            if-let
+              old $ js/document.querySelector "\"input"
+              .!remove old
+            &let
+              el $ js/document.createElement "\"input"
+              -> el .-type $ set! "\"file"
+              js/document.body.appendChild el
+              .!addEventListener el "\"change" $ fn (event)
+                let
+                    file $ -> event .-target .-files .-0
+                    reader $ new js/FileReader
+                  set! (.-onload reader)
+                    fn (e)
+                      set! (.-src img) (-> e .-target .-result)
+                  set! (.-onerror reader)
+                    fn (e) (js/console.error "\"Failed to load image" e)
+                  .!readAsDataURL reader file
+              if
+                = "\"input" $ get-env "\"image" "\"builtin"
+                set! (.-className el) "\"visible"
+              , el
+            , img
       :ns $ quote
         ns app.comp.kaleidoscope $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group

@@ -1,5 +1,9 @@
 ## A playground of shaders based on Phlox(and PIXI.js)
 
+Demo https://r.tiye.me/Phlox-GL/shader-kneading/
+
+- allow input image in kaleidoscope https://r.tiye.me/Phlox-GL/shader-kneading/?image=input
+
 ### Usage
 
 ```bash

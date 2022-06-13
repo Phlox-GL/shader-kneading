@@ -2,6 +2,7 @@
 precision mediump float;
 
 uniform sampler2D colorTexture;
+uniform sampler2D color2Texture;
 uniform vec2 shift;
 uniform float scale;
 uniform float parts;
@@ -89,7 +90,11 @@ void main() {
             // return;
             continue;
         } else {
-            gl_FragColor = texture2D(colorTexture, fract((color_point - shift) * scale));
+            // if (fract(at_part * 0.5) < 0.5) {
+                gl_FragColor = texture2D(colorTexture, fract((color_point - shift) * scale));
+            // } else {
+            //     gl_FragColor = texture2D(color2Texture, fract((color_point - shift) * scale));
+            // }
             return;
         }
 

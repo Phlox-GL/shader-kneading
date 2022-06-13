@@ -13,3 +13,16 @@ body * {
   box-sizing: border-box;
   flex-shrink: 0;
 }
+
+input {
+  display: none;
+}
+
+input.visible {
+  display: inline-block;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: transparent;
+  color: white;
+}
