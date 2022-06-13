@@ -1,6 +1,4 @@
-
-Phlox workflow in [calcit-js](http://calcit-lang.org/)
-----
+## A playground of shaders based on Phlox(and PIXI.js)
 
 ### Usage
 
@@ -9,6 +7,13 @@ yarn
 cr --emit-js -1
 yarn vite
 ```
+
+### Resource
+
+for Kaleidoscepe:
+
+- background image https://www.pinterest.com/pin/5981411997407646/
+- bg alternative https://www.pinterest.com/pin/255860822571687971/
 
 ### Workflow
 

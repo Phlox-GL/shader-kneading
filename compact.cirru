@@ -4,6 +4,37 @@
     :modules $ [] |memof/ |lilac/ |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/
   :entries $ {}
   :files $ {}
+    |app.comp.bending $ {}
+      :defs $ {}
+        |comp-bending $ quote
+          defn comp-bending (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} $ :n 1
+              mesh $ {}
+                :position $ [] 100 100
+                :geometry $ {}
+                  :attributes $ []
+                    {} (:id |aVertexPosition) (:size 2)
+                      :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                    {} (:id |aUvs) (:size 2)
+                      :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                  :index $ [] 0 1 2 0 3 2
+                :shader $ {}
+                  :vertex-source $ inline-shader |bending.vert
+                  :fragment-source $ inline-shader |bending.frag
+                :draw-mode :triangles
+                :uniforms $ js-object
+                  :n $ :n state
+      :ns $ quote
+        ns app.comp.bending $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
     |app.comp.container $ {}
       :defs $ {}
         |comp-container $ quote
@@ -25,9 +56,11 @@
                   :isohypse $ comp-isohypse (>> states :isohypse)
                   :star-trail $ comp-star-trail (>> states :star-trail)
                   :star-link $ comp-star-link
-                  :wind-ring $ comp-wind-ring states
+                  :wind-ring $ comp-wind-ring (>> states :wind-ring)
+                  :bending $ comp-bending (>> states :bending)
+                  :kaleidoscope $ comp-kaleidoscope (>> states :kaleidoscope)
                 comp-tabs
-                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring")
+                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring") ([] :bending "\"Bending") ([] :kaleidoscope "\"Kaleidoscope")
                   , tab
                     {} $ :position ([] -408 -300)
                     fn (t d!) (d! :tab t)
@@ -43,6 +76,8 @@
           phlox.comp.tabs :refer $ comp-tabs
           app.comp.isohypse :refer $ comp-isohypse comp-wind-ring
           app.comp.star-trail :refer $ comp-star-trail comp-star-link
+          app.comp.bending :refer $ comp-bending
+          app.comp.kaleidoscope :refer $ comp-kaleidoscope
     |app.comp.fake-3d $ {}
       :defs $ {}
         |comp-fake-3d $ quote
@@ -187,6 +222,84 @@
           respo-ui.core :as ui
           memof.alias :refer $ memof-call
           app.config :refer $ inline-shader
+    |app.comp.kaleidoscope $ {}
+      :defs $ {}
+        |comp-kaleidoscope $ quote
+          defn comp-kaleidoscope (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} (:n 1)
+                    :shift $ [] 0 0
+                    :scale 0.1
+                    :parts 1
+                    :radius 0.8
+                shift $ :shift state
+              group ({})
+                mesh $ {}
+                  :position $ [] 100 100
+                  :geometry $ {}
+                    :attributes $ []
+                      {} (:id |aVertexPosition) (:size 2)
+                        :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                      {} (:id |aUvs) (:size 2)
+                        :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                    :index $ [] 0 1 2 0 3 2
+                  :shader $ {}
+                    :vertex-source $ inline-shader |kaleidoscope.vert
+                    :fragment-source $ inline-shader |kaleidoscope.frag
+                  :draw-mode :triangles
+                  :uniforms $ js-object
+                    :n $ :n state
+                    :shift $ js-array
+                      * 0.01 $ nth shift 0
+                      * 0.01 $ nth shift 1
+                    :colorTexture $ .!from PIXI/Texture "\"./assets/bricks.jpeg"
+                    :scale $ :scale state
+                    :parts $ :parts state
+                    :radius $ :radius state
+                comp-drag-point (>> states :p3)
+                  {} (:position shift) (:unit 1.0) (:radius 6)
+                    :fill $ hslx 0 90 100
+                    ; :color $ hslx 0 90 100
+                    :alpha 1
+                    :hide-text? true
+                    :on-change $ fn (position d!)
+                      d! cursor $ assoc state :shift position
+                comp-slider (>> states :scale)
+                  {} (:title "\"scale") (:unit 0.01) (:min 0.001) (:max 1.0)
+                    :position $ [] 20 -360
+                    :fill $ hslx 50 90 70
+                    :color $ hslx 200 90 30
+                    :value $ :scale state
+                    :on-change $ fn (value d!)
+                      d! cursor $ assoc state :scale value
+                comp-slider (>> states :parts)
+                  {} (:title "\"parts") (:unit 0.01) (:min 1.99) (:max 12)
+                    :position $ [] 160 -360
+                    :fill $ hslx 50 90 70
+                    :color $ hslx 200 90 30
+                    :value $ :parts state
+                    :on-change $ fn (value d!)
+                      d! cursor $ assoc state :parts value
+                comp-slider (>> states :radius)
+                  {} (:title "\"radius") (:unit 0.01) (:min 0.1) (:max 0.9)
+                    :position $ [] 300 -360
+                    :fill $ hslx 50 90 70
+                    :color $ hslx 200 90 30
+                    :value $ :radius state
+                    :on-change $ fn (value d!)
+                      d! cursor $ assoc state :radius value
+      :ns $ quote
+        ns app.comp.kaleidoscope $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          phlox.comp.slider :refer $ comp-slider
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
+          "\"pixi.js" :as PIXI
     |app.comp.moon-demo $ {}
       :defs $ {}
         |comp-moon-demo $ quote
@@ -296,7 +409,7 @@
             -> (new FontFaceObserver "\"Josefin Sans") (.!load)
               .!then $ fn (event) (render-app!)
             add-watch *store :change $ fn (store prev) (render-app!)
-            render-control!
+            when mobile? $ render-control!
             start-control-loop! 8 on-control-event
             println "\"App Started"
         |reload! $ quote
@@ -304,7 +417,7 @@
             do (clear-phlox-caches!) (remove-watch *store :change)
               add-watch *store :change $ fn (store prev) (render-app!)
               render-app!
-              replace-control-loop! 8 on-control-event
+              when mobile? $ replace-control-loop! 8 on-control-event
               hud! "\"ok~" "\"Ok"
             hud! "\"error" build-errors
         |render-app! $ quote
