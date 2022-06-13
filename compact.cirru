@@ -43,7 +43,7 @@
             let
                 cursor $ []
                 states $ :states store
-                tab $ either (:tab store) :star-trail
+                tab $ either (:tab store) :kaleidoscope
               container ({})
                 case-default tab
                   text $ {}
@@ -231,8 +231,8 @@
                 state $ or (:data states)
                   {} (:n 1)
                     :shift $ [] 0 0
-                    :scale 0.1
-                    :parts 1
+                    :scale 1
+                    :parts 1.99
                     :radius 0.8
                 shift $ :shift state
               group ({})
