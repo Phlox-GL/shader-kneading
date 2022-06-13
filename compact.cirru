@@ -232,6 +232,8 @@
                   {} (:n 1)
                     :shift $ [] 0 0
                     :scale 0.1
+                    :parts 1
+                    :radius 0.8
                 shift $ :shift state
               group ({})
                 mesh $ {}
@@ -252,8 +254,10 @@
                     :shift $ js-array
                       * 0.01 $ nth shift 0
                       * 0.01 $ nth shift 1
-                    :colorTexture $ .!from PIXI/Texture "\"/assets/colorful-window.jpeg"
+                    :colorTexture $ .!from PIXI/Texture "\"/assets/bricks.jpeg"
                     :scale $ :scale state
+                    :parts $ :parts state
+                    :radius $ :radius state
                 comp-drag-point (>> states :p3)
                   {} (:position shift) (:unit 1.0) (:radius 6)
                     :fill $ hslx 0 90 100
@@ -263,16 +267,29 @@
                     :on-change $ fn (position d!)
                       d! cursor $ assoc state :shift position
                 comp-slider (>> states :scale)
-                  {}
-                    :value $ :scale state
-                    :unit 0.01
-                    :min 0.001
-                    :max 1.0
+                  {} (:title "\"scale") (:unit 0.01) (:min 0.001) (:max 1.0)
                     :position $ [] 20 -360
                     :fill $ hslx 50 90 70
                     :color $ hslx 200 90 30
+                    :value $ :scale state
                     :on-change $ fn (value d!)
                       d! cursor $ assoc state :scale value
+                comp-slider (>> states :parts)
+                  {} (:title "\"parts") (:unit 0.01) (:min 1.99) (:max 12)
+                    :position $ [] 160 -360
+                    :fill $ hslx 50 90 70
+                    :color $ hslx 200 90 30
+                    :value $ :parts state
+                    :on-change $ fn (value d!)
+                      d! cursor $ assoc state :parts value
+                comp-slider (>> states :radius)
+                  {} (:title "\"radius") (:unit 0.01) (:min 0.1) (:max 0.9)
+                    :position $ [] 300 -360
+                    :fill $ hslx 50 90 70
+                    :color $ hslx 200 90 30
+                    :value $ :radius state
+                    :on-change $ fn (value d!)
+                      d! cursor $ assoc state :radius value
       :ns $ quote
         ns app.comp.kaleidoscope $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
