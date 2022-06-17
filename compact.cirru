@@ -59,10 +59,11 @@
                   :wind-ring $ comp-wind-ring (>> states :wind-ring)
                   :bending $ comp-bending (>> states :bending)
                   :kaleidoscope $ comp-kaleidoscope (>> states :kaleidoscope)
+                  :hyper-grid $ comp-hyper-grid (>> states :hyper-grid)
                 comp-tabs
-                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring") ([] :bending "\"Bending") ([] :kaleidoscope "\"Kaleidoscope")
+                  [] ([] :moon "\"Moon") ([] :fake-3d "\"Fake 3d") ([] :isohypse "\"Isohypse") ([] :star-link "\"Star Link") ([] :star-trail "\"Star Trail") ([] :wind-ring "\"Wind Ring") ([] :bending "\"Bending") ([] :kaleidoscope "\"Kaleidoscope") ([] :hyper-grid "\"Hyper Lens")
                   , tab
-                    {} $ :position ([] -408 -300)
+                    {} $ :position ([] -448 -300)
                     fn (t d!) (d! :tab t)
       :ns $ quote
         ns app.comp.container $ :require
@@ -78,6 +79,7 @@
           app.comp.star-trail :refer $ comp-star-trail comp-star-link
           app.comp.bending :refer $ comp-bending
           app.comp.kaleidoscope :refer $ comp-kaleidoscope
+          app.comp.hyper-grid :refer $ comp-hyper-grid
     |app.comp.fake-3d $ {}
       :defs $ {}
         |comp-fake-3d $ quote
@@ -163,6 +165,58 @@
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh
           phlox.comp.button :refer $ comp-button
           phlox.comp.drag-point :refer $ comp-drag-point
+          respo-ui.core :as ui
+          memof.alias :refer $ memof-call
+          app.config :refer $ inline-shader
+    |app.comp.hyper-grid $ {}
+      :defs $ {}
+        |comp-hyper-grid $ quote
+          defn comp-hyper-grid (states)
+            let
+                cursor $ :cursor states
+                state $ or (:data states)
+                  {} (:scale 1)
+                    :shift $ [] 100 0
+                shift $ :shift state
+              group ({})
+                mesh $ {}
+                  :position $ [] 100 100
+                  :geometry $ {}
+                    :attributes $ []
+                      {} (:id |aVertexPosition) (:size 2)
+                        :buffer $ [] -400 -400 400 -400 400 400 -400 400
+                      {} (:id |aUvs) (:size 2)
+                        :buffer $ [] -1 -1 1 -1 1 1 -1 1
+                    :index $ [] 0 1 2 0 3 2
+                  :shader $ {}
+                    :vertex-source $ inline-shader |hyper-grid.vert
+                    :fragment-source $ inline-shader |hyper-grid.frag
+                  :draw-mode :triangles
+                  :uniforms $ js-object
+                    :scale $ :scale state
+                    :shift $ js-array & shift
+                comp-drag-point (>> states :shift)
+                  {} (:position shift) (:unit 0.01) (:radius 6)
+                    :fill $ hslx 200 100 60
+                    ; :color $ hslx 0 90 100
+                    :alpha 1
+                    :hide-text? true
+                    :on-change $ fn (position d!)
+                      d! cursor $ assoc state :shift position
+                comp-slider (>> states :scale)
+                  {} (:title "\"scale") (:unit 0.01) (:min 0.5) (:max 4)
+                    :position $ [] 160 -360
+                    :fill $ hslx 50 90 70
+                    :color $ hslx 200 90 30
+                    :value $ :scale state
+                    :on-change $ fn (value d!)
+                      d! cursor $ assoc state :scale value
+      :ns $ quote
+        ns app.comp.hyper-grid $ :require
+          phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
+          phlox.comp.button :refer $ comp-button
+          phlox.comp.drag-point :refer $ comp-drag-point
+          phlox.comp.slider :refer $ comp-slider
           respo-ui.core :as ui
           memof.alias :refer $ memof-call
           app.config :refer $ inline-shader
