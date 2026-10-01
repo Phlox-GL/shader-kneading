@@ -6,3 +6,8 @@ js-out/
 node_modules/
 dist/
 .DS_Store
+.calcit/
+.yarn/
+.pnp.*
+compact.cirru
+package.cirru
