@@ -13,7 +13,7 @@ yarn build
 yarn dev
 ```
 
-`yarn dev` 先生成初始 JS，再并行运行 Calcit watch 和 Vite；任一进程退出时停止另一进程。`yarn build` 仍只编译一次。
+`yarn dev` 先生成初始 JS，再启动 Vite。实时修改 Calcit 时另开终端运行 `calcit calcit.cirru js -w`，无需增加 concurrently 或其他进程管理依赖。`yarn build` 仍只编译一次。
 
 ### Resource
 

@@ -11,13 +11,12 @@
     "pixi.js": "^7.2.4"
   },
   "devDependencies": {
-    "concurrently": "^10.0.5",
     "mobile-detect": "^1.4.5",
     "vite": "^8.3.1"
   },
   "scripts": {
     "compile": "calcit calcit.cirru js",
     "build": "yarn compile && vite build",
-    "dev": "yarn compile && concurrently --kill-others \"calcit calcit.cirru js -w\" \"vite\""
+    "dev": "yarn compile && vite"
   }
 }
