@@ -13,9 +13,6 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-bending (states)
             let
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
                 state $ schema/normalize-NState $ .unwrap-or (get states :data) (schema/NState :n 1)
               mesh $ {}
                 :position $ [] 100 100
@@ -47,7 +44,6 @@
           :code $ quote $ defn comp-container (store)
             ; println |Store store $ :tab store
             let
-                cursor $ []
                 states $ decode-map-as
                   .unwrap $ get store :states
                   :: 'Map 'Tag 'Dynamic
@@ -98,9 +94,6 @@
         'comp-fake-3d $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-fake-3d (states)
             let
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
                 state $ schema/normalize-NState $ .unwrap-or (get states :data) (schema/NState :n 1)
               mesh $ {}
                 :position $ [] 0 0
@@ -256,9 +249,6 @@
         'comp-isohypse $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-isohypse (states)
             let
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
                 state $ schema/normalize-NState $ .unwrap-or (get states :data) (schema/NState :n 1)
               mesh $ {}
                 :position $ [] 100 100
@@ -401,9 +391,6 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-moon-demo (states)
             let
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
                 state $ schema/normalize-NState $ .unwrap-or (get states :data) (schema/NState :n 1)
               mesh $ {}
                 :position $ [] 100 100
