@@ -13,6 +13,8 @@ yarn build
 yarn dev
 ```
 
+`yarn dev` 先生成初始 JS，再并行运行 Calcit watch 和 Vite；任一进程退出时停止另一进程。`yarn build` 仍只编译一次。
+
 ### Resource
 
 使用 Calcit / `@calcit/procs` 0.27.0、Node.js 24、Yarn 4.18.0 与 Vite。源码只维护 `calcit.cirru` / `deps.cirru`；snapshot 必须通过 Calcit CLI 编辑。
