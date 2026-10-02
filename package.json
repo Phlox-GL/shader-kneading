@@ -15,7 +15,8 @@
     "vite": "^8.3.1"
   },
   "scripts": {
-    "compile": "calcit calcit.cirru js",
+    "compile": "calcit",
+    "watch": "calcit -w",
     "build": "yarn compile && vite build",
     "dev": "yarn compile && vite"
   }

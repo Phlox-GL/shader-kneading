@@ -13,7 +13,7 @@ yarn build
 yarn dev
 ```
 
-`yarn dev` 先生成初始 JS，再启动 Vite。实时修改 Calcit 时另开终端运行 `calcit calcit.cirru js -w`，无需增加 concurrently 或其他进程管理依赖。`yarn build` 仍只编译一次。
+`yarn dev` 先按默认 JS 入口编译，再启动 Vite。实时修改 Calcit 时另开终端运行 `yarn watch`。`yarn build` 只编译一次。
 
 ### Resource
 
@@ -21,7 +21,7 @@ yarn dev
 
 九个演示页签保持原 shader / 三维投影公式与控制范围；组件返回 `PhloxElement`，控件状态使用字段明确的 Struct，坐标为 `List<Number>`。单 Enum dispatch 检查载荷后构造 nominal Op，ID/时间为 String/Number。开放 store/控件树保留 `Map<Tag, Dynamic>`，不宣称零类型债务。Wind Ring 的指针事件计数补初始化 `:t 0`；原先第一次递增未定义字段。
 
-图片输入与 Josefin Sans 加载由 `assets/browser.mjs` 提供真实宿主接口；默认 bricks 纹理由 Vite 打包生成 CDN URL，仍支持用户图片、image=input、移动控制和原8ms控制循环。前端生产路径为 `https://cos-sh.tiye.me/Phlox-GL/shader-kneading/`，Vite base 与 COS prefix 一致。main push 使用 COS action v1.1.1 的 public-base-url 内置 verify，不添加验证脚本；PR 只检查和构建，不读取部署 secrets。原服务器 `dist/*` 与 rsync destination 保留，生成HTML有意改为COS前端URL。
+图片输入与 Josefin Sans 加载由 `assets/browser.mjs` 提供真实宿主接口；默认 bricks 纹理由 Vite 打包生成 CDN URL，仍支持用户图片、image=input、移动控制和原8ms控制循环。前端生产路径为 `https://cos-sh.tiye.me/Phlox-GL/shader-kneading/`，Vite base 与 COS prefix 一致。main push 使用 COS action v1.2.0 的 public-base-url 内置 verify；部署任务排队执行，上传前检查提交仍是当前 main，过期提交同时跳过 COS 和服务器同步。PR 只检查和构建，不读取部署 secrets。原服务器 `dist/*` 与 rsync destination 保留，生成HTML使用COS前端URL。
 
 CI 保留规范/入口严格检查、全部应用公共定义检查和编译构建。Phlox/TouchControl 的 js-ffi 请求冲突仍见 Phlox-GL/phlox#62，不宣称严格 Caps 无冲突或真实 WebGL 交互已验收。
 
