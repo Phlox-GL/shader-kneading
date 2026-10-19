@@ -35,9 +35,9 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.bending
           :require
-            [] phlox.core :refer $ [] mesh
-            [] app.config :refer $ [] inline-shader
-            [] app.schema :as schema
+            phlox.core :refer $ mesh
+            app.config :refer $ inline-shader
+            app.schema :as schema
     'app.comp.container $ %{} 'FileEntry
       :defs $ {} $ 'comp-container
         %{} 'CodeEntry (:doc |)
@@ -59,15 +59,15 @@
                     :position $ [] 1 1
                     :style $ {} (:font-size 32) (:font-family "|Josefin Sans")
                       :fill $ hslx 10 100 70
-                  :moon $ comp-moon-demo $ >> states :moon
-                  :fake-3d $ comp-fake-3d $ >> states :fake-3d
-                  :isohypse $ comp-isohypse $ >> states :isohypse
-                  :star-trail $ comp-star-trail $ >> states :star-trail
+                  :moon $ comp-moon-demo $ decode-map-as (>> states :moon) (:: 'Map 'Tag 'Dynamic)
+                  :fake-3d $ comp-fake-3d $ decode-map-as (>> states :fake-3d) (:: 'Map 'Tag 'Dynamic)
+                  :isohypse $ comp-isohypse $ decode-map-as (>> states :isohypse) (:: 'Map 'Tag 'Dynamic)
+                  :star-trail $ comp-star-trail $ decode-map-as (>> states :star-trail) (:: 'Map 'Tag 'Dynamic)
                   :star-link $ comp-star-link
-                  :wind-ring $ comp-wind-ring $ >> states :wind-ring
-                  :bending $ comp-bending $ >> states :bending
-                  :kaleidoscope $ comp-kaleidoscope $ >> states :kaleidoscope
-                  :hyper-grid $ comp-hyper-grid $ >> states :hyper-grid
+                  :wind-ring $ comp-wind-ring $ decode-map-as (>> states :wind-ring) (:: 'Map 'Tag 'Dynamic)
+                  :bending $ comp-bending $ decode-map-as (>> states :bending) (:: 'Map 'Tag 'Dynamic)
+                  :kaleidoscope $ comp-kaleidoscope $ decode-map-as (>> states :kaleidoscope) (:: 'Map 'Tag 'Dynamic)
+                  :hyper-grid $ comp-hyper-grid $ decode-map-as (>> states :hyper-grid) (:: 'Map 'Tag 'Dynamic)
                 comp-tabs
                   [] ([] :moon |Moon) ([] :fake-3d "|Fake 3d") ([] :isohypse |Isohypse) ([] :star-link "|Star Link") ([] :star-trail "|Star Trail") ([] :wind-ring "|Wind Ring") ([] :bending |Bending) ([] :kaleidoscope |Kaleidoscope) ([] :hyper-grid "|Hyper Lens")
                   , tab
@@ -80,15 +80,15 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
-            [] phlox.core :refer $ [] container >> text hslx
-            [] phlox.comp.tabs :refer $ [] comp-tabs
-            [] app.comp.moon-demo :refer $ [] comp-moon-demo
-            [] app.comp.fake-3d :refer $ [] comp-fake-3d
-            [] app.comp.isohypse :refer $ [] comp-isohypse comp-wind-ring
-            [] app.comp.star-trail :refer $ [] comp-star-trail comp-star-link
-            [] app.comp.bending :refer $ [] comp-bending
-            [] app.comp.kaleidoscope :refer $ [] comp-kaleidoscope
-            [] app.comp.hyper-grid :refer $ [] comp-hyper-grid
+            phlox.core :refer $ container >> text hslx
+            phlox.comp.tabs :refer $ comp-tabs
+            app.comp.moon-demo :refer $ comp-moon-demo
+            app.comp.fake-3d :refer $ comp-fake-3d
+            app.comp.isohypse :refer $ comp-isohypse comp-wind-ring
+            app.comp.star-trail :refer $ comp-star-trail comp-star-link
+            app.comp.bending :refer $ comp-bending
+            app.comp.kaleidoscope :refer $ comp-kaleidoscope
+            app.comp.hyper-grid :refer $ comp-hyper-grid
     'app.comp.fake-3d $ %{} 'FileEntry
       :defs $ {}
         'comp-fake-3d $ %{} 'CodeEntry (:doc |)
@@ -185,9 +185,9 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.fake-3d
           :require
-            [] phlox.core :refer $ [] mesh
-            [] app.config :refer $ [] inline-shader
-            [] app.schema :as schema
+            phlox.core :refer $ mesh
+            app.config :refer $ inline-shader
+            app.schema :as schema
     'app.comp.hyper-grid $ %{} 'FileEntry
       :defs $ {} $ 'comp-hyper-grid
         %{} 'CodeEntry (:doc |)
@@ -223,7 +223,8 @@
                     :alpha 1
                     :hide-text? true
                     :on-change $ fn (position d!)
-                      d! $ :: :states cursor $ assoc state :shift position
+                      d! $ :: :states cursor $ assoc state :shift
+                        decode-map-as position $ :: 'List 'Number
                 comp-slider (>> states :scale)
                   {} (:title |scale) (:unit 0.01) (:min 0.5) (:max 4)
                     :position $ [] 160 -360
@@ -231,7 +232,7 @@
                     :color $ hslx 200 90 30
                     :value $ :scale state
                     :on-change $ fn (value d!)
-                      d! $ :: :states cursor $ assoc state :scale value
+                      d! $ :: :states cursor $ assoc state :scale (decode-map-as value 'Number)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
@@ -239,11 +240,11 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.hyper-grid
           :require
-            [] phlox.core :refer $ [] mesh group >> hslx
-            [] app.config :refer $ [] inline-shader
-            [] app.schema :as schema
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ mesh group >> hslx
+            app.config :refer $ inline-shader
+            app.schema :as schema
+            phlox.comp.drag-point :refer $ comp-drag-point
+            phlox.comp.slider :refer $ comp-slider
     'app.comp.isohypse $ %{} 'FileEntry
       :defs $ {}
         'comp-isohypse $ %{} 'CodeEntry (:doc |)
@@ -303,9 +304,9 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.isohypse
           :require
-            [] phlox.core :refer $ [] mesh
-            [] app.config :refer $ [] inline-shader
-            [] app.schema :as schema
+            phlox.core :refer $ mesh
+            app.config :refer $ inline-shader
+            app.schema :as schema
     'app.comp.kaleidoscope $ %{} 'FileEntry
       :defs $ {} $ 'comp-kaleidoscope
         %{} 'CodeEntry (:doc |)
@@ -348,7 +349,8 @@
                     :alpha 1
                     :hide-text? true
                     :on-change $ fn (position d!)
-                      d! $ :: :states cursor $ assoc state :shift position
+                      d! $ :: :states cursor $ assoc state :shift
+                        decode-map-as position $ :: 'List 'Number
                 comp-slider (>> states :scale)
                   {} (:title |scale) (:unit 0.01) (:min 0.001) (:max 2.0)
                     :position $ [] 20 -360
@@ -356,7 +358,7 @@
                     :color $ hslx 200 90 30
                     :value $ :scale state
                     :on-change $ fn (value d!)
-                      d! $ :: :states cursor $ assoc state :scale value
+                      d! $ :: :states cursor $ assoc state :scale (decode-map-as value 'Number)
                 comp-slider (>> states :parts)
                   {} (:title |parts) (:unit 0.01) (:min 1.99) (:max 12)
                     :position $ [] 160 -360
@@ -364,7 +366,7 @@
                     :color $ hslx 200 90 30
                     :value $ :parts state
                     :on-change $ fn (value d!)
-                      d! $ :: :states cursor $ assoc state :parts value
+                      d! $ :: :states cursor $ assoc state :parts (decode-map-as value 'Number)
                 comp-slider (>> states :radius)
                   {} (:title |radius) (:unit 0.01) (:min 0.1) (:max 0.9)
                     :position $ [] 300 -360
@@ -372,7 +374,7 @@
                     :color $ hslx 200 90 30
                     :value $ :radius state
                     :on-change $ fn (value d!)
-                      d! $ :: :states cursor $ assoc state :radius value
+                      d! $ :: :states cursor $ assoc state :radius (decode-map-as value 'Number)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
@@ -380,12 +382,12 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.kaleidoscope
           :require
-            [] phlox.core :refer $ [] mesh group >> hslx
-            [] app.config :refer $ [] inline-shader
-            [] app.schema :as schema
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] |../assets/browser.mjs :refer $ [] imageTexture
+            phlox.core :refer $ mesh group >> hslx
+            app.config :refer $ inline-shader
+            app.schema :as schema
+            phlox.comp.drag-point :refer $ comp-drag-point
+            phlox.comp.slider :refer $ comp-slider
+            |../assets/browser.mjs :refer $ imageTexture
     'app.comp.moon-demo $ %{} 'FileEntry
       :defs $ {} $ 'comp-moon-demo
         %{} 'CodeEntry (:doc |)
@@ -413,9 +415,9 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.moon-demo
           :require
-            [] phlox.core :refer $ [] mesh
-            [] app.config :refer $ [] inline-shader
-            [] app.schema :as schema
+            phlox.core :refer $ mesh
+            app.config :refer $ inline-shader
+            app.schema :as schema
     'app.comp.star-trail $ %{} 'FileEntry
       :defs $ {}
         'comp-star-link $ %{} 'CodeEntry (:doc |)
@@ -473,9 +475,9 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.star-trail
           :require
-            [] phlox.core :refer $ [] mesh
-            [] app.config :refer $ [] inline-shader
-            [] app.schema :as schema
+            phlox.core :refer $ mesh
+            app.config :refer $ inline-shader
+            app.schema :as schema
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'inline-shader $ %{} 'CodeEntry (:doc |)
@@ -513,6 +515,7 @@
               reset! *store $ updater @*store op
                 decode-map-as (nanoid) 'String
                 decode-map-as (js/Date.now) 'Number
+              , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -520,9 +523,11 @@
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             if dev? $ load-console-formatter!
-            initializeImageInput $ = |input $ .unwrap-or (get-env |image) |builtin
+            initializeImageInput
+              = |input $ .unwrap-or (get-env |image) |builtin
+              fn () $ render-app!
             whenFontsReady $ fn () $ render-app!
-            add-watch *store :change $ fn (store prev) (render-app!)
+            add-watch! *store :change $ fn (store prev) (render-app!)
             when mobile? $ render-control!
             start-control-loop! 8 on-control-event
             println "|App Started"
@@ -533,12 +538,13 @@
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (js-nullish? build-errors)
-              do (clear-phlox-caches!) (remove-watch *store :change)
-                add-watch *store :change $ fn (store prev) (render-app!)
+              do (clear-phlox-caches!) (remove-watch! *store :change)
+                add-watch! *store :change $ fn (store prev) (render-app!)
                 render-app!
                 when mobile? $ replace-control-loop! 8 on-control-event
                 hud! |ok~ |Ok
               hud! |error build-errors
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -553,16 +559,16 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
-            [] phlox.core :refer $ [] render! clear-phlox-caches! on-control-event
-            [] app.comp.container :refer $ [] comp-container
-            [] app.schema :as schema
-            [] phlox.config :refer $ [] dev? mobile?
-            [] |nanoid :refer $ [] nanoid
-            [] app.updater :refer $ [] updater
-            [] |../assets/browser.mjs :refer $ [] whenFontsReady initializeImageInput
-            [] |./calcit.build-errors :default build-errors
-            [] |bottom-tip :default hud!
-            [] touch-control.core :refer $ [] render-control! start-control-loop! replace-control-loop!
+            phlox.core :refer $ render! clear-phlox-caches! on-control-event
+            app.comp.container :refer $ comp-container
+            app.schema :as schema
+            phlox.config :refer $ dev? mobile?
+            |nanoid :refer $ nanoid
+            app.updater :refer $ updater
+            |../assets/browser.mjs :refer $ whenFontsReady initializeImageInput
+            |./calcit.build-errors :default build-errors
+            |bottom-tip :default hud!
+            touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'HyperState $ %{} 'CodeEntry (:doc |)
@@ -599,7 +605,8 @@
         'normalize-HyperState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-HyperState (data)
             if (struct? data)
-              if (&struct:matches? data HyperState) (assert-type data 'app.schema/HyperState) (raise |Unexpected-HyperState)
+              struct-match data (HyperState state state)
+                _ unexpected $ raise |Unexpected-HyperState
               decode-map-as data 'app.schema/HyperState
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/HyperState)
@@ -607,7 +614,8 @@
         'normalize-KaleidoState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-KaleidoState (data)
             if (struct? data)
-              if (&struct:matches? data KaleidoState) (assert-type data 'app.schema/KaleidoState) (raise |Unexpected-KaleidoState)
+              struct-match data (KaleidoState state state)
+                _ unexpected $ raise |Unexpected-KaleidoState
               decode-map-as data 'app.schema/KaleidoState
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/KaleidoState)
@@ -615,7 +623,8 @@
         'normalize-NState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-NState (data)
             if (struct? data)
-              if (&struct:matches? data NState) (assert-type data 'app.schema/NState) (raise |Unexpected-NState)
+              struct-match data (NState state state)
+                _ unexpected $ raise |Unexpected-NState
               decode-map-as data 'app.schema/NState
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/NState)
@@ -623,7 +632,8 @@
         'normalize-TimeState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-TimeState (data)
             if (struct? data)
-              if (&struct:matches? data TimeState) (assert-type data 'app.schema/TimeState) (raise |Unexpected-TimeState)
+              struct-match data (TimeState state state)
+                _ unexpected $ raise |Unexpected-TimeState
               decode-map-as data 'app.schema/TimeState
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/TimeState)
@@ -631,12 +641,9 @@
         'normalize-WindState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-WindState (data)
             if (struct? data)
-              if (&struct:matches? data WindState) (assert-type data 'app.schema/WindState) (raise |Unexpected-WindState)
-              let
-                  m $ decode-map-as data $ :: 'Map 'Tag 'Dynamic
-                decode-map-as
-                  assoc m :t $ .unwrap-or (get m :t) 0
-                  , 'app.schema/WindState
+              struct-match data (WindState state state)
+                _ unexpected $ raise |Unexpected-WindState
+              decode-map-as data 'app.schema/WindState
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/WindState)
             :args $ [] 'Dynamic
@@ -676,6 +683,25 @@
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'Map 'Tag 'Dynamic) 'app.schema/Op 'String 'Number
             :return $ :: 'Map 'Tag 'Dynamic
+          :tests $ [] $ %{} 'TestEntry (:name |routes-tab-and-controls)
+            :code $ quote $ let
+                initial $ {}
+                  :states $ {}
+                  :tab :moon
+                changed $ updater initial
+                  app.schema/Op :states ([] :kaleidoscope)
+                    {} $ :scale 1.2
+                  , |test 1
+              assert=
+                {} $ :scale 1.2
+                .unwrap $ get
+                  .unwrap $ get
+                    .unwrap $ get changed :states
+                    , :kaleidoscope
+                  , :data
+              assert= :hyper-grid $ .unwrap $ get
+                updater changed (app.schema/Op :tab :hyper-grid) |test 2
+                , :tab
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ [] phlox.cursor :refer $ [] update-states
+          :require $ phlox.cursor :refer $ update-states

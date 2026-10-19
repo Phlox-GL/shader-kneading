@@ -2,10 +2,10 @@ import FontFaceObserver from "fontfaceobserver-es";
 import { Texture } from "pixi.js";
 import bricksUrl from "./bricks.jpeg?url";
 
-let image;
+let texture;
+const initialTexture = Texture.fromURL(bricksUrl).then((loaded) => { texture = loaded; });
 
-export function initializeImageInput(visible) {
-  image = new Image();
+export function initializeImageInput(visible, onTextureReady) {
   document.querySelector("input")?.remove();
   const input = document.createElement("input");
   input.type = "file";
@@ -14,7 +14,14 @@ export function initializeImageInput(visible) {
     const file = input.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => { image.src = reader.result; };
+    reader.onload = async () => {
+      try {
+        texture = await Texture.fromURL(reader.result);
+        onTextureReady();
+      } catch (error) {
+        console.error("Failed to load texture", error);
+      }
+    };
     reader.onerror = (event) => console.error("Failed to load image", event);
     reader.readAsDataURL(file);
   });
@@ -22,9 +29,9 @@ export function initializeImageInput(visible) {
 }
 
 export function imageTexture() {
-  return Texture.from(image.src || bricksUrl);
+  return texture;
 }
 
 export function whenFontsReady(callback) {
-  new FontFaceObserver("Josefin Sans").load().then(callback);
+  Promise.all([new FontFaceObserver("Josefin Sans").load(), initialTexture]).then(() => callback());
 }
