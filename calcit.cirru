@@ -53,12 +53,7 @@
                     , :kaleidoscope
                   , 'Tag
               container ({})
-                case-default tab
-                  text $ {}
-                    :text $ str "|Unknown tab " tab
-                    :position $ [] 1 1
-                    :style $ {} (:font-size 32) (:font-family "|Josefin Sans")
-                      :fill $ hslx 10 100 70
+                match tab
                   :moon $ comp-moon-demo $ decode-map-as (>> states :moon) (:: 'Map 'Tag 'Dynamic)
                   :fake-3d $ comp-fake-3d $ decode-map-as (>> states :fake-3d) (:: 'Map 'Tag 'Dynamic)
                   :isohypse $ comp-isohypse $ decode-map-as (>> states :isohypse) (:: 'Map 'Tag 'Dynamic)
@@ -68,6 +63,11 @@
                   :bending $ comp-bending $ decode-map-as (>> states :bending) (:: 'Map 'Tag 'Dynamic)
                   :kaleidoscope $ comp-kaleidoscope $ decode-map-as (>> states :kaleidoscope) (:: 'Map 'Tag 'Dynamic)
                   :hyper-grid $ comp-hyper-grid $ decode-map-as (>> states :hyper-grid) (:: 'Map 'Tag 'Dynamic)
+                  _ $ text $ {}
+                    :text $ str "|Unknown tab " tab
+                    :position $ [] 1 1
+                    :style $ {} (:font-size 32) (:font-family "|Josefin Sans")
+                      :fill $ hslx 10 100 70
                 comp-tabs
                   [] ([] :moon |Moon) ([] :fake-3d "|Fake 3d") ([] :isohypse |Isohypse) ([] :star-link "|Star Link") ([] :star-trail "|Star Trail") ([] :wind-ring "|Wind Ring") ([] :bending |Bending) ([] :kaleidoscope |Kaleidoscope) ([] :hyper-grid "|Hyper Lens")
                   , tab
