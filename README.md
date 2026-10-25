@@ -37,6 +37,8 @@ for Kaleidoscepe:
 
 https://github.com/Phlox-GL/phlox-workflow
 
+后续源码清理仅把 `app.main/*store` 的 `defatom` 改为首选 `defref`，名称、初值、类型、watcher、shader 公式、图片输入和 HUD 均不变。官方 Linux 0.30.1 的原状态回归、完整 strict、公开定义检查及构建通过，改写前后 67 个生成 JS 文件的哈希一致；这不替代实际浏览器、图片或热重载验收。依赖、工作流与部署路径不改，不增加永久测试或校验脚本。
+
 ### License
 
 MIT
