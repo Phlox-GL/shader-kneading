@@ -17,7 +17,7 @@ yarn dev
 
 ### Resource
 
-使用精确配对的正式 Calcit / `@calcit/procs` 0.30.1、Node.js 24、Yarn 4.18.0 与 Vite。源码只维护 `calcit.cirru` / `deps.cirru`；Snapshot 必须通过 Calcit CLI 编辑。正式模块为 Phlox 0.7.16 / Touch Control 0.0.32，传递 JS FFI 0.2.5 / Pointed Prompt 0.0.20。
+使用精确配对的正式 Calcit / `@calcit/procs` 0.32.1、Node.js 24、Yarn 4.18.0 与 Vite。源码只维护 `calcit.cirru` / `deps.cirru`；Snapshot 必须通过 Calcit CLI 编辑。正式模块为 Phlox 0.8.0 / Touch Control 0.0.35，传递 JS FFI 0.2.9 / Pointed Prompt 0.0.24。
 
 九个演示页签保持原 shader / 三维投影公式与控制范围；组件返回 `PhloxElement`，控件状态使用字段明确的 Struct，坐标为 `List<Number>`。单 Enum dispatch 检查载荷后构造 nominal Op，ID/时间为 String/Number。开放 store/控件树保留 `Map<Tag, Dynamic>`，不宣称零类型债务。Wind Ring 的指针事件计数补初始化 `:t 0`；原先第一次递增未定义字段。
 页签分支由 `case-default` 迁为 `match`，九个分支和默认提示不变；`hud!` 的页面错误/成功提示保留，不改成 `raise`。PR 使用相对资源 URL 并保存短期原始 dist 供验收，不新增部署权限或重复上传校验脚本。
@@ -26,7 +26,9 @@ yarn dev
 
 CI 使用严格依赖解析、全定义、完整 strict、附着状态回归与编译构建。保留已迁移的 watch API、imports、Unit 返回值与五个状态结构匹配；Kaleidoscope/Hyper Lens 的坐标和数值回调使用实际解码。字体宿主适配器按 Calcit 零参回调合同调用；首次绘制等待 bricks 纹理就绪，图片输入通过 Texture.fromURL 加载成功后主动重绘，不依赖后续用户操作。
 
-历史 alpha.5 已通过全定义239/239、完整strict、原状态回归和九页签/合成图片验收；这不代替正式依赖图的验收，精确提交的 CI 和实际操作证据见迁移 PR。部分静态文字在切页后消失、刷新恢复，对应 Phlox-GL/phlox#71 的未决观察，不宣称已修复。独立依赖解析以 CI 为准，不执行本地 Caps；移动端双触点仍未验收。
+正式 0.32.1 已通过真实发布依赖图的 Caps strict、全定义 239/239、公开定义 36/36、完整 strict、原状态测试 1/1、不可变安装及 JS/Vite 构建。36 个定义的 schema 和测试元数据未变；4 处旧类型表达式由官方 CLI 转换，4 处运行中的 `wo-log` 恒等包装及 1 处注释内包装通过结构化编辑移除，原表达式、求值顺序和 shader 公式保留。Yarn 使用统一 60 分钟依赖年龄门禁，无包级例外。
+
+本轮实际验收覆盖九个页签、默认 bricks 纹理、Kaleidoscope 参数从 1.0000 拖到 1.4800 后重绘，以及刷新恢复默认页；浏览器 warn/error 为空。图片输入、热重载和移动双触点尚未在这次精确候选上复验；不沿用历史图片验收作为本轮通过证据。Phlox-GL/phlox#71 的文字可见性观察仍保留，不宣称已修复。
 
 for Kaleidoscepe:
 
@@ -37,7 +39,7 @@ for Kaleidoscepe:
 
 https://github.com/Phlox-GL/phlox-workflow
 
-后续源码清理仅把 `app.main/*store` 的 `defatom` 改为首选 `defref`，名称、初值、类型、watcher、shader 公式、图片输入和 HUD 均不变。官方 Linux 0.30.1 的原状态回归、完整 strict、公开定义检查及构建通过，改写前后 67 个生成 JS 文件的哈希一致；这不替代实际浏览器、图片或热重载验收。依赖、工作流与部署路径不改，不增加永久测试或校验脚本。
+`app.main/*store` 已使用 `defref`；名称、初值、类型与 watcher 保留。工作流与部署路径未改，不增加永久测试或校验脚本。
 
 ### License
 
