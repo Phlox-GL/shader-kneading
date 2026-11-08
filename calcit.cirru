@@ -40,27 +40,20 @@
       :defs $ {} $ 'comp-container
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-container (store)
-            ; println |Store store $ :tab store
             let
-                states $ decode-map-as
-                  .unwrap $ get store :states
-                  :: 'Map 'Tag 'Dynamic
-                tab $ decode-map-as
-                  either
-                    .unwrap-or (get store :tab) nil
-                    , :kaleidoscope
-                  , 'Tag
+                states $ :states store
+                tab $ :tab store
               container ({})
                 match tab
-                  :moon $ comp-moon-demo $ decode-map-as (>> states :moon) (:: 'Map 'Tag 'Dynamic)
-                  :fake-3d $ comp-fake-3d $ decode-map-as (>> states :fake-3d) (:: 'Map 'Tag 'Dynamic)
-                  :isohypse $ comp-isohypse $ decode-map-as (>> states :isohypse) (:: 'Map 'Tag 'Dynamic)
-                  :star-trail $ comp-star-trail $ decode-map-as (>> states :star-trail) (:: 'Map 'Tag 'Dynamic)
+                  :moon $ comp-moon-demo $ decode-map-as (>> states :moon) (Map Tag Dynamic)
+                  :fake-3d $ comp-fake-3d $ decode-map-as (>> states :fake-3d) (Map Tag Dynamic)
+                  :isohypse $ comp-isohypse $ decode-map-as (>> states :isohypse) (Map Tag Dynamic)
+                  :star-trail $ comp-star-trail $ decode-map-as (>> states :star-trail) (Map Tag Dynamic)
                   :star-link $ comp-star-link
-                  :wind-ring $ comp-wind-ring $ decode-map-as (>> states :wind-ring) (:: 'Map 'Tag 'Dynamic)
-                  :bending $ comp-bending $ decode-map-as (>> states :bending) (:: 'Map 'Tag 'Dynamic)
-                  :kaleidoscope $ comp-kaleidoscope $ decode-map-as (>> states :kaleidoscope) (:: 'Map 'Tag 'Dynamic)
-                  :hyper-grid $ comp-hyper-grid $ decode-map-as (>> states :hyper-grid) (:: 'Map 'Tag 'Dynamic)
+                  :wind-ring $ comp-wind-ring $ decode-map-as (>> states :wind-ring) (Map Tag Dynamic)
+                  :bending $ comp-bending $ decode-map-as (>> states :bending) (Map Tag Dynamic)
+                  :kaleidoscope $ comp-kaleidoscope $ decode-map-as (>> states :kaleidoscope) (Map Tag Dynamic)
+                  :hyper-grid $ comp-hyper-grid $ decode-map-as (>> states :hyper-grid) (Map Tag Dynamic)
                   _ $ text $ {}
                     :text $ str "|Unknown tab " tab
                     :position $ [] 1 1
@@ -71,9 +64,13 @@
                   , tab
                     {} $ :position $ [] -448 -300
                     fn (t d!)
-                      d! $ :: :tab t
+                      hint-fn $ Fn Tag
+                        Fn app.schema/NavigationOp $ -> Unit
+                        -> Unit
+                      d! $ app.schema/NavigationOp :tab t
+                      , &unit
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement)
+          :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
@@ -184,7 +181,7 @@
             let
                 cursor $ decode-map-as
                   .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
+                  List app.schema/CoordKey
                 state $ schema/normalize-HyperState $ .unwrap-or (get states :data)
                   schema/HyperState :scale 1 :shift $ [] 100 0
                 shift $ :shift state
@@ -212,8 +209,8 @@
                     :alpha 1
                     :hide-text? true
                     :on-change $ fn (position d!)
-                      d! $ :: :states cursor $ assoc state :shift
-                        decode-map-as position $ :: 'List 'Number
+                      d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :shift
+                        decode-map-as position $ List Number
                 comp-slider (>> states :scale)
                   {} (:title |scale) (:unit 0.01) (:min 0.5) (:max 4)
                     :position $ [] 160 -360
@@ -221,7 +218,7 @@
                     :color $ hslx 200 90 30
                     :value $ :scale state
                     :on-change $ fn (value d!)
-                      d! $ :: :states cursor $ assoc state :scale (decode-map-as value 'Number)
+                      d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :scale (decode-map-as value 'Number)
           :examples $ []
           :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
@@ -259,7 +256,7 @@
             let
                 cursor $ decode-map-as
                   .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
+                  List app.schema/CoordKey
                 state $ schema/normalize-WindState $ .unwrap-or (get states :data) (schema/WindState :n 1 :t 0)
               mesh $ {}
                 :position $ [] 100 100
@@ -280,7 +277,7 @@
                     , 1000
                 :on $ {} $ :pointermove
                   fn (e d!)
-                    d! $ :: :states cursor $ assoc state :t
+                    d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :t
                       inc $ :t state
           :examples $ []
           :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
@@ -297,7 +294,7 @@
             let
                 cursor $ decode-map-as
                   .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
+                  List app.schema/CoordKey
                 state $ schema/normalize-KaleidoState $ .unwrap-or (get states :data)
                   schema/KaleidoState :n 1 :shift ([] 0 0) :scale 1 :parts 1.99 :radius 0.8
                 shift $ :shift state
@@ -332,8 +329,8 @@
                     :alpha 1
                     :hide-text? true
                     :on-change $ fn (position d!)
-                      d! $ :: :states cursor $ assoc state :shift
-                        decode-map-as position $ :: 'List 'Number
+                      d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :shift
+                        decode-map-as position $ List Number
                 comp-slider (>> states :scale)
                   {} (:title |scale) (:unit 0.01) (:min 0.001) (:max 2.0)
                     :position $ [] 20 -360
@@ -341,7 +338,7 @@
                     :color $ hslx 200 90 30
                     :value $ :scale state
                     :on-change $ fn (value d!)
-                      d! $ :: :states cursor $ assoc state :scale (decode-map-as value 'Number)
+                      d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :scale (decode-map-as value 'Number)
                 comp-slider (>> states :parts)
                   {} (:title |parts) (:unit 0.01) (:min 1.99) (:max 12)
                     :position $ [] 160 -360
@@ -349,7 +346,7 @@
                     :color $ hslx 200 90 30
                     :value $ :parts state
                     :on-change $ fn (value d!)
-                      d! $ :: :states cursor $ assoc state :parts (decode-map-as value 'Number)
+                      d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :parts (decode-map-as value 'Number)
                 comp-slider (>> states :radius)
                   {} (:title |radius) (:unit 0.01) (:min 0.1) (:max 0.9)
                     :position $ [] 300 -360
@@ -357,7 +354,7 @@
                     :color $ hslx 200 90 30
                     :value $ :radius state
                     :on-change $ fn (value d!)
-                      d! $ :: :states cursor $ assoc state :radius (decode-map-as value 'Number)
+                      d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :radius (decode-map-as value 'Number)
           :examples $ []
           :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
@@ -422,7 +419,7 @@
             let
                 cursor $ decode-map-as
                   .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
+                  List app.schema/CoordKey
                 state $ schema/normalize-TimeState $ .unwrap-or (get states :data) (schema/TimeState :t 0)
               mesh $ {}
                 :position $ [] 100 100
@@ -443,7 +440,7 @@
                     , 1000
                 :on $ {} $ :pointermove
                   fn (e d!)
-                    d! $ :: :states cursor $ assoc state :t
+                    d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :t
                       inc $ :t state
           :examples $ []
           :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
@@ -478,20 +475,13 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ quote $ Ref (Map Tag Dynamic)
+          :schema $ quote $ Ref app.schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (raw-op)
-            let
-                op $ schema/normalize-op raw-op
-              when dev? $ match op
-                (:states cursor state) nil
-                _ $ println |dispatch! op
-              reset! *store $ updater @*store op
-                decode-map-as (nanoid) 'String
-                decode-map-as (js/Date.now) 'Number
-              , &unit
+            reset! *store $ updater @*store $ schema/normalize-op raw-op
+            , &unit
           :examples $ []
-          :schema $ quote $ Fn Enum (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:open :reflect)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             if dev? $ load-console-formatter!
@@ -529,7 +519,6 @@
             app.comp.container :refer $ comp-container
             app.schema :as schema
             phlox.config :refer $ dev? mobile?
-            |nanoid :refer $ nanoid
             app.updater :refer $ updater
             |../assets/browser.mjs :refer $ whenFontsReady initializeImageInput
             |./calcit.build-errors :default build-errors
@@ -537,37 +526,60 @@
             touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
     'app.schema $ %{} 'FileEntry
       :defs $ {}
+        'CoordKey $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion CoordKey Tag String Number
+          :examples $ []
+          :schema $ quote UnionDef
+        'DrawingOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum DrawingOp
+            :set-drawing (List app.schema/CoordKey) app.schema/DrawingState
+          :examples $ []
+          :schema $ quote EnumDef
+        'DrawingState $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion DrawingState HyperState KaleidoState TimeState WindState
+          :examples $ []
+          :schema $ quote UnionDef
         'HyperState $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct HyperState (:scale 'Number)
-            :shift $ quote $ List Number
+          :code $ quote $ defstruct HyperState (:scale Number)
+            :shift $ List Number
           :examples $ []
           :schema $ quote StructDef
         'KaleidoState $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct KaleidoState (:n 'Number)
-            :shift $ quote $ List Number
-            :scale 'Number
-            :parts 'Number
-            :radius 'Number
+          :code $ quote $ defstruct KaleidoState (:n Number)
+            :shift $ List Number
+            :scale Number
+            :parts Number
+            :radius Number
           :examples $ []
           :schema $ quote StructDef
         'NState $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct NState (:n 'Number)
+          :code $ quote $ defstruct NState (:n Number)
           :examples $ []
           :schema $ quote StructDef
-        'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op (:tab 'Tag)
-            :states
-              quote $ List Dynamic
-              , 'Dynamic
-            :hydrate-storage $ quote $ Map Tag Dynamic
+        'NavigationOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum NavigationOp (:tab Tag)
           :examples $ []
           :schema $ quote EnumDef
-        'TimeState $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct TimeState (:t 'Number)
+        'Op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion Op NavigationOp WidgetOp DrawingOp
+          :examples $ []
+          :schema $ quote UnionDef
+        'Store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Store (:tab Tag)
+            :states $ Map Tag Dynamic
           :examples $ []
           :schema $ quote StructDef
+        'TimeState $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct TimeState (:t Number)
+          :examples $ []
+          :schema $ quote StructDef
+        'WidgetOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum WidgetOp
+            :states (List app.schema/CoordKey) Dynamic
+          :examples $ []
+          :schema $ quote EnumDef
         'WindState $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct WindState (:n 'Number) (:t 'Number)
+          :code $ quote $ defstruct WindState (:n Number) (:t Number)
           :examples $ []
           :schema $ quote StructDef
         'normalize-HyperState $ %{} 'CodeEntry (:doc |)
@@ -611,58 +623,76 @@
           :examples $ []
           :schema $ quote $ Fn Dynamic (-> app.schema/WindState)
         'normalize-op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn normalize-op (op)
-            match op
-              (:tab tab)
-                Op :tab $ decode-map-as tab 'Tag
-              (:states cursor data)
-                Op :states
-                  decode-map-as cursor $ :: 'List 'Dynamic
-                  , data
-              (:hydrate-storage data)
-                Op :hydrate-storage $ decode-map-as data $ :: 'Map 'Tag 'Dynamic
-              _ $ raise |Unknown-operation
+          :code $ quote $ defn normalize-op (raw)
+            let
+                kind $ enum-definition raw
+              cond
+                  = kind $ Option :some app.schema/NavigationOp
+                  decode-map-as raw 'app.schema/NavigationOp
+                (= kind (Option :some app.schema/WidgetOp))
+                  decode-map-as raw 'app.schema/WidgetOp
+                (= kind (Option :some app.schema/DrawingOp))
+                  decode-map-as raw 'app.schema/DrawingOp
+                true $ match raw
+                  (:tab tab)
+                    NavigationOp :tab $ decode-map-as tab 'Tag
+                  (:states cursor data)
+                    WidgetOp :states
+                      decode-map-as cursor $ List app.schema/CoordKey
+                      , data
+                  _ $ raise |Unknown-operation
           :examples $ []
-          :schema $ quote $ Fn Enum (-> app.schema/Op)
+          :schema $ quote $ Fn AnyEnum (-> app.schema/Op) (:open :decode)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
-            {} (:tab nil)
-              :states $ {}
-              :cursor $ []
+            Store :tab :kaleidoscope :states $ {}
           :examples $ []
-          :schema $ quote $ Map Tag Dynamic
+          :schema $ quote app.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.updater $ %{} 'FileEntry
-      :defs $ {} $ 'updater
-        %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn updater (store op op-id op-time)
-            match op
-              (:tab tab) (assoc store :tab tab)
-              (:states cursor state) (update-states store cursor state)
-              (:hydrate-storage data) data
+      :defs $ {}
+        'update-widget $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn update-widget (store cursor state)
+            &struct:assoc store :states $ decode-map-as
+              .unwrap $ get
+                update-states
+                  {} $ :states $ :states store
+                  , cursor state
+                , :states
+              Map Tag Dynamic
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) app.schema/Op String Number
-            -> $ Map Tag Dynamic
+          :schema $ quote $ Fn app.schema/Store (List app.schema/CoordKey) T (-> app.schema/Store) (:generics T)
+        'updater $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn updater (store op)
+            match op
+              (app.schema/NavigationOp navigation)
+                match navigation $
+                  :tab tab
+                  &struct:assoc store :tab tab
+              (app.schema/WidgetOp widget)
+                match widget $
+                  :states cursor state
+                  update-widget store cursor state
+              (app.schema/DrawingOp drawing)
+                match drawing $
+                  :set-drawing cursor state
+                  update-widget store cursor state
+          :examples $ []
+          :schema $ quote $ Fn app.schema/Store app.schema/Op (-> app.schema/Store)
           :tests $ [] $ %{} 'TestEntry (:name |routes-tab-and-controls)
             :code $ quote $ let
-                initial $ {}
-                  :states $ {}
-                  :tab :moon
-                changed $ updater initial
-                  app.schema/Op :states ([] :kaleidoscope)
-                    {} $ :scale 1.2
-                  , |test 1
+                initial $ &struct:assoc app.schema/store :tab :moon
+                changed $ updater initial $ app.schema/WidgetOp :states ([] :kaleidoscope)
+                  {} $ :scale 1.2
+                drawing $ app.schema/KaleidoState :n 1 :shift ([] 0 0) :scale 1.6 :parts 3 :radius 1
+                drawn $ updater changed $ app.schema/DrawingOp :set-drawing ([] :kaleidoscope) drawing
               assert=
-                {} $ :scale 1.2
-                .unwrap $ get
-                  .unwrap $ get
-                    .unwrap $ get changed :states
-                    , :kaleidoscope
-                  , :data
-              assert= :hyper-grid $ .unwrap $ get
-                updater changed (app.schema/Op :tab :hyper-grid) |test 2
-                , :tab
+                Result :ok $ {} $ :scale 1.2
+                get-in (:states changed) ([] :kaleidoscope :data)
+              assert= :hyper-grid $ :tab $ updater changed (app.schema/NavigationOp :tab :hyper-grid)
+              assert= (Result :ok drawing)
+                get-in (:states drawn) ([] :kaleidoscope :data)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ phlox.cursor :refer $ update-states

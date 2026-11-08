@@ -17,6 +17,28 @@ yarn dev
 
 ### Resource
 
+使用配对的正式 Calcit 和 `@calcit/procs` 0.38.0、Node 24 和 Yarn 4.18.0。
+正式依赖包含 Phlox 0.9.3 和 Touch Control 0.0.39。九个页签的公式、默认砖纹和控件范围保持一致。
+页签切换、绘图参数和 Phlox 游标通过不同的具名操作传递。绘图状态用 union 表示，
+开放控件树仅在 Phlox 接缝处理。HUD、图片解码后的主动重绘和原触控循环保留。
+
+PR 保留相对路径的前端构建产物供验收。生产工作流沿用原 CDN 和 rsync 路径，
+上传前核对 main 版本并通过 COS action v1.3.0 内置校验。
+
+for Kaleidoscepe:
+
+- background image https://www.pinterest.com/pin/5981411997407646/
+- bg alternative https://www.pinterest.com/pin/255860822571687971/
+
+### Workflow
+
+https://github.com/Phlox-GL/phlox-workflow
+
+`app.main/*store` 已使用 `defref`；名称、初值、类型与 watcher 保留。工作流与部署路径未改，不增加永久测试或校验脚本。
+
+<details>
+<summary>0.32.1 历史迁移记录</summary>
+
 使用精确配对的正式 Calcit / `@calcit/procs` 0.32.1、Node.js 24、Yarn 4.18.0 与 Vite。源码只维护 `calcit.cirru` / `deps.cirru`；Snapshot 必须通过 Calcit CLI 编辑。正式模块为 Phlox 0.8.0 / Touch Control 0.0.35，传递 JS FFI 0.2.9 / Pointed Prompt 0.0.24。
 
 九个演示页签保持原 shader / 三维投影公式与控制范围；组件返回 `PhloxElement`，控件状态使用字段明确的 Struct，坐标为 `List<Number>`。单 Enum dispatch 检查载荷后构造 nominal Op，ID/时间为 String/Number。开放 store/控件树保留 `Map<Tag, Dynamic>`，不宣称零类型债务。Wind Ring 的指针事件计数补初始化 `:t 0`；原先第一次递增未定义字段。
@@ -30,16 +52,7 @@ CI 使用严格依赖解析、全定义、完整 strict、附着状态回归与�
 
 本轮实际验收覆盖九个页签、默认 bricks 纹理、Kaleidoscope 参数从 1.0000 拖到 1.4800 后重绘，以及刷新恢复默认页；浏览器 warn/error 为空。图片输入、热重载和移动双触点尚未在这次精确候选上复验；不沿用历史图片验收作为本轮通过证据。Phlox-GL/phlox#71 的文字可见性观察仍保留，不宣称已修复。
 
-for Kaleidoscepe:
-
-- background image https://www.pinterest.com/pin/5981411997407646/
-- bg alternative https://www.pinterest.com/pin/255860822571687971/
-
-### Workflow
-
-https://github.com/Phlox-GL/phlox-workflow
-
-`app.main/*store` 已使用 `defref`；名称、初值、类型与 watcher 保留。工作流与部署路径未改，不增加永久测试或校验脚本。
+</details>
 
 ### License
 
