@@ -481,7 +481,7 @@
             reset! *store $ updater @*store $ schema/normalize-op raw-op
             , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit) (:open :reflect)
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:open :decode)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             if dev? $ load-console-formatter!
@@ -634,8 +634,6 @@
                 (= kind (Option :some app.schema/DrawingOp))
                   decode-map-as raw 'app.schema/DrawingOp
                 true $ match raw
-                  (:tab tab)
-                    NavigationOp :tab $ decode-map-as tab 'Tag
                   (:states cursor data)
                     WidgetOp :states
                       decode-map-as cursor $ List app.schema/CoordKey
