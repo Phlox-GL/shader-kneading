@@ -17,7 +17,7 @@ yarn dev
 
 ### Resource
 
-使用配对的正式 Calcit 和 `@calcit/procs` 0.40.0、Node 24 和 Yarn 4.18.0。
+使用配对的正式 Calcit 和 `@calcit/procs` 0.41.0、Node 24 和 Yarn 4.18.0。 控件状态通过 `WidgetValue` union 校验布尔值、数字和数值列表。
 正式依赖包含 Phlox 0.9.3 和 Touch Control 0.0.39。九个页签的公式、默认砖纹和控件范围保持一致。
 页签切换、绘图参数和 Phlox 游标通过不同的具名操作传递。绘图状态用 union 表示，
 开放控件树仅在 Phlox 接缝处理。HUD、图片解码后的主动重绘和原触控循环保留。
