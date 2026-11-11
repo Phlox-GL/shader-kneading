@@ -475,11 +475,30 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ quote $ Ref app.schema/Store
+          :schema $ quote $ Ref schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch! (raw-op)
-            reset! *store $ updater @*store $ schema/normalize-op raw-op
+          :code $ quote $ defn dispatch! (op)
+            reset! *store $ updater @*store op
             , &unit
+          :examples $ []
+          :schema $ quote $ Fn schema/Op (-> Unit)
+        'dispatch-phlox! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn dispatch-phlox! (raw)
+            let
+                kind $ enum-definition raw
+              cond
+                  = kind $ Some app.schema/NavigationOp
+                  dispatch! $ decode-map-as raw 'app.schema/NavigationOp
+                (= kind (Some app.schema/WidgetOp))
+                  dispatch! $ decode-map-as raw 'app.schema/WidgetOp
+                (= kind (Some app.schema/DrawingOp))
+                  dispatch! $ decode-map-as raw 'app.schema/DrawingOp
+                true $ match raw
+                  (:states cursor data)
+                    dispatch! $ schema/WidgetOp :states
+                      decode-map-as cursor $ List app.schema/CoordKey
+                      decode-map-as data $ Map Tag schema/WidgetValue
+                  _ $ raise |Unknown-operation
           :examples $ []
           :schema $ quote $ Fn AnyEnum (-> Unit) (:open :decode)
         'main! $ %{} 'CodeEntry (:doc |)
@@ -509,7 +528,7 @@
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (comp-container @*store) dispatch! $ {}
+            render! (comp-container @*store) dispatch-phlox! $ {}
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
@@ -575,9 +594,13 @@
           :schema $ quote StructDef
         'WidgetOp $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum WidgetOp
-            :states (List app.schema/CoordKey) Dynamic
+            :states (List app.schema/CoordKey) (Map Tag app.schema/WidgetValue)
           :examples $ []
           :schema $ quote EnumDef
+        'WidgetValue $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion WidgetValue Bool Number (List Number)
+          :examples $ []
+          :schema $ quote UnionDef
         'WindState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct WindState (:n Number) (:t Number)
           :examples $ []
@@ -589,7 +612,7 @@
                 _ unexpected $ raise |Unexpected-HyperState
               decode-map-as data 'app.schema/HyperState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> app.schema/HyperState)
+          :schema $ quote $ Fn Dynamic (-> HyperState)
         'normalize-KaleidoState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-KaleidoState (data)
             if (struct? data)
@@ -597,7 +620,7 @@
                 _ unexpected $ raise |Unexpected-KaleidoState
               decode-map-as data 'app.schema/KaleidoState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> app.schema/KaleidoState)
+          :schema $ quote $ Fn Dynamic (-> KaleidoState)
         'normalize-NState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-NState (data)
             if (struct? data)
@@ -605,7 +628,7 @@
                 _ unexpected $ raise |Unexpected-NState
               decode-map-as data 'app.schema/NState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> app.schema/NState)
+          :schema $ quote $ Fn Dynamic (-> NState)
         'normalize-TimeState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-TimeState (data)
             if (struct? data)
@@ -613,7 +636,7 @@
                 _ unexpected $ raise |Unexpected-TimeState
               decode-map-as data 'app.schema/TimeState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> app.schema/TimeState)
+          :schema $ quote $ Fn Dynamic (-> TimeState)
         'normalize-WindState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-WindState (data)
             if (struct? data)
@@ -621,31 +644,12 @@
                 _ unexpected $ raise |Unexpected-WindState
               decode-map-as data 'app.schema/WindState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> app.schema/WindState)
-        'normalize-op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn normalize-op (raw)
-            let
-                kind $ enum-definition raw
-              cond
-                  = kind $ Option :some app.schema/NavigationOp
-                  decode-map-as raw 'app.schema/NavigationOp
-                (= kind (Option :some app.schema/WidgetOp))
-                  decode-map-as raw 'app.schema/WidgetOp
-                (= kind (Option :some app.schema/DrawingOp))
-                  decode-map-as raw 'app.schema/DrawingOp
-                true $ match raw
-                  (:states cursor data)
-                    WidgetOp :states
-                      decode-map-as cursor $ List app.schema/CoordKey
-                      , data
-                  _ $ raise |Unknown-operation
-          :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> app.schema/Op) (:open :decode)
+          :schema $ quote $ Fn Dynamic (-> WindState)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :tab :kaleidoscope :states $ {}
           :examples $ []
-          :schema $ quote app.schema/Store
+          :schema $ quote Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.updater $ %{} 'FileEntry
