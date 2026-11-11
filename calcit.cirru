@@ -612,7 +612,7 @@
                 _ unexpected $ raise |Unexpected-HyperState
               decode-map-as data 'app.schema/HyperState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> HyperState)
+          :schema $ quote $ Fn Input (-> HyperState) (:generics Input)
         'normalize-KaleidoState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-KaleidoState (data)
             if (struct? data)
@@ -620,7 +620,7 @@
                 _ unexpected $ raise |Unexpected-KaleidoState
               decode-map-as data 'app.schema/KaleidoState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> KaleidoState)
+          :schema $ quote $ Fn Input (-> KaleidoState) (:generics Input)
         'normalize-NState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-NState (data)
             if (struct? data)
@@ -628,7 +628,7 @@
                 _ unexpected $ raise |Unexpected-NState
               decode-map-as data 'app.schema/NState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> NState)
+          :schema $ quote $ Fn Input (-> NState) (:generics Input)
         'normalize-TimeState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-TimeState (data)
             if (struct? data)
@@ -636,7 +636,7 @@
                 _ unexpected $ raise |Unexpected-TimeState
               decode-map-as data 'app.schema/TimeState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> TimeState)
+          :schema $ quote $ Fn Input (-> TimeState) (:generics Input)
         'normalize-WindState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-WindState (data)
             if (struct? data)
@@ -644,7 +644,7 @@
                 _ unexpected $ raise |Unexpected-WindState
               decode-map-as data 'app.schema/WindState
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> WindState)
+          :schema $ quote $ Fn Input (-> WindState) (:generics Input)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :tab :kaleidoscope :states $ {}
