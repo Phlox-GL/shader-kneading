@@ -29,7 +29,7 @@
                 :draw-mode :triangles
                 :uniforms $ js-object $ :n (:n state)
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map schema/CoordKey schema/ControlBranchField) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.bending
           :require
@@ -45,15 +45,15 @@
                 tab $ :tab store
               container ({})
                 match tab
-                  :moon $ comp-moon-demo $ decode-map-as (>> states :moon) (Map Tag Dynamic)
-                  :fake-3d $ comp-fake-3d $ decode-map-as (>> states :fake-3d) (Map Tag Dynamic)
-                  :isohypse $ comp-isohypse $ decode-map-as (>> states :isohypse) (Map Tag Dynamic)
-                  :star-trail $ comp-star-trail $ decode-map-as (>> states :star-trail) (Map Tag Dynamic)
+                  :moon $ comp-moon-demo $ decode-map-as (>> states :moon) (Map app.schema/CoordKey app.schema/ControlBranchField)
+                  :fake-3d $ comp-fake-3d $ decode-map-as (>> states :fake-3d) (Map app.schema/CoordKey app.schema/ControlBranchField)
+                  :isohypse $ comp-isohypse $ decode-map-as (>> states :isohypse) (Map app.schema/CoordKey app.schema/ControlBranchField)
+                  :star-trail $ comp-star-trail $ decode-map-as (>> states :star-trail) (Map app.schema/CoordKey app.schema/ControlBranchField)
                   :star-link $ comp-star-link
-                  :wind-ring $ comp-wind-ring $ decode-map-as (>> states :wind-ring) (Map Tag Dynamic)
-                  :bending $ comp-bending $ decode-map-as (>> states :bending) (Map Tag Dynamic)
-                  :kaleidoscope $ comp-kaleidoscope $ decode-map-as (>> states :kaleidoscope) (Map Tag Dynamic)
-                  :hyper-grid $ comp-hyper-grid $ decode-map-as (>> states :hyper-grid) (Map Tag Dynamic)
+                  :wind-ring $ comp-wind-ring $ decode-map-as (>> states :wind-ring) (Map app.schema/CoordKey app.schema/ControlBranchField)
+                  :bending $ comp-bending $ decode-map-as (>> states :bending) (Map app.schema/CoordKey app.schema/ControlBranchField)
+                  :kaleidoscope $ comp-kaleidoscope $ decode-map-as (>> states :kaleidoscope) (Map app.schema/CoordKey app.schema/ControlBranchField)
+                  :hyper-grid $ comp-hyper-grid $ decode-map-as (>> states :hyper-grid) (Map app.schema/CoordKey app.schema/ControlBranchField)
                   _ $ text $ {}
                     :text $ str "|Unknown tab " tab
                     :position $ [] 1 1
@@ -104,7 +104,7 @@
                   :fragment-source $ inline-shader |fake-3d.frag
                 :uniforms $ js-object $ :n (:n state)
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map schema/CoordKey schema/ControlBranchField) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'move-x $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn move-x (point)
             -> point
@@ -220,7 +220,7 @@
                     :on-change $ fn (value d!)
                       d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :scale (decode-map-as value 'Number)
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map schema/CoordKey schema/ControlBranchField) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.hyper-grid
           :require
@@ -250,7 +250,7 @@
                 :draw-mode :triangles
                 :uniforms $ js-object $ :n (:n state)
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map schema/CoordKey schema/ControlBranchField) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-wind-ring $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-wind-ring (states)
             let
@@ -280,7 +280,7 @@
                     d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :t
                       inc $ :t state
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map schema/CoordKey schema/ControlBranchField) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.isohypse
           :require
@@ -356,7 +356,7 @@
                     :on-change $ fn (value d!)
                       d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :radius (decode-map-as value 'Number)
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map schema/CoordKey schema/ControlBranchField) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.kaleidoscope
           :require
@@ -387,7 +387,7 @@
                 :draw-mode :triangles
                 :uniforms $ js-object $ :n (:n state)
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map schema/CoordKey schema/ControlBranchField) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.moon-demo
           :require
@@ -443,7 +443,7 @@
                     d! $ app.schema/DrawingOp :set-drawing cursor $ assoc state :t
                       inc $ :t state
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map schema/CoordKey schema/ControlBranchField) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.star-trail
           :require
@@ -545,6 +545,14 @@
             touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
     'app.schema $ %{} 'FileEntry
       :defs $ {}
+        'ControlBranchField $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion ControlBranchField Bool Number (List CoordKey) DrawingState NState (Map CoordKey ControlNode)
+          :examples $ []
+          :schema $ quote UnionDef
+        'ControlNode $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion ControlNode WidgetValue DrawingState NState (Map CoordKey ControlNode)
+          :examples $ []
+          :schema $ quote UnionDef
         'CoordKey $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defunion CoordKey Tag String Number
           :examples $ []
@@ -585,7 +593,7 @@
           :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store (:tab Tag)
-            :states $ Map Tag Dynamic
+            :states $ Map Tag ControlNode
           :examples $ []
           :schema $ quote StructDef
         'TimeState $ %{} 'CodeEntry (:doc |)
@@ -657,14 +665,10 @@
         'update-widget $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn update-widget (store cursor state)
             &struct:assoc store :states $ decode-map-as
-              .unwrap $ get
-                update-states
-                  {} $ :states $ :states store
-                  , cursor state
-                , :states
-              Map Tag Dynamic
+              assoc-in (:states store) (conj cursor :data) state
+              Map Tag app.schema/ControlNode
           :examples $ []
-          :schema $ quote $ Fn app.schema/Store (List app.schema/CoordKey) T (-> app.schema/Store) (:generics T)
+          :schema $ quote $ Fn app.schema/Store (List app.schema/CoordKey) app.schema/ControlNode (-> app.schema/Store)
         'updater $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op)
             match op
@@ -689,12 +693,38 @@
                   {} $ :scale 1.2
                 drawing $ app.schema/KaleidoState :n 1 :shift ([] 0 0) :scale 1.6 :parts 3 :radius 1
                 drawn $ updater changed $ app.schema/DrawingOp :set-drawing ([] :kaleidoscope) drawing
+                nested $ updater drawn $ app.schema/WidgetOp :states ([] :kaleidoscope :spin 0)
+                  {} $ :dragging? true
+                render-branch $ decode-map-as
+                  phlox.core/>> (:states nested) :kaleidoscope
+                  Map app.schema/CoordKey app.schema/ControlBranchField
+                nested-branch $ decode-map-as
+                  .unwrap $ get (:states nested) :kaleidoscope
+                  Map app.schema/CoordKey app.schema/ControlNode
+                spin-branch $ decode-map-as
+                  .unwrap $ get nested-branch :spin
+                  Map app.schema/CoordKey app.schema/ControlNode
+                child-branch $ decode-map-as
+                  .unwrap $ get spin-branch 0
+                  Map app.schema/CoordKey app.schema/ControlNode
+                changed-branch $ decode-map-as
+                  .unwrap $ get (:states changed) :kaleidoscope
+                  Map app.schema/CoordKey app.schema/ControlNode
+                drawn-branch $ decode-map-as
+                  .unwrap $ get (:states drawn) :kaleidoscope
+                  Map app.schema/CoordKey app.schema/ControlNode
               assert=
-                Result :ok $ {} $ :scale 1.2
-                get-in (:states changed) ([] :kaleidoscope :data)
+                Some $ {} $ :scale 1.2
+                get changed-branch :data
               assert= :hyper-grid $ :tab $ updater changed (app.schema/NavigationOp :tab :hyper-grid)
-              assert= (Result :ok drawing)
-                get-in (:states drawn) ([] :kaleidoscope :data)
+              assert= (Some drawing) (get drawn-branch :data)
+              assert= (Some drawing) (get nested-branch :data)
+              assert=
+                Some $ {} $ :dragging? true
+                get child-branch :data
+              assert=
+                Some $ [] :kaleidoscope
+                get render-branch :cursor
+              assert= (Some drawing) (get render-branch :data)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ phlox.cursor :refer $ update-states

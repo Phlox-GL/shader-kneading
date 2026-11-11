@@ -17,10 +17,10 @@ yarn dev
 
 ### Resource
 
-使用配对的正式 Calcit 和 `@calcit/procs` 0.41.0、Node 24 和 Yarn 4.18.0。 控件状态通过 `WidgetValue` union 校验布尔值、数字和数值列表。
+使用配对的正式 Calcit 和 `@calcit/procs` 0.41.1、Node 24 和 Yarn 4.18.0。 控件状态通过 `WidgetValue` union 校验布尔值、数字和数值列表。
 正式依赖包含 Phlox 0.9.3 和 Touch Control 0.0.39。九个页签的公式、默认砖纹和控件范围保持一致。
 页签切换、绘图参数和 Phlox 游标通过不同的具名操作传递。绘图状态用 union 表示，
-开放控件树仅在 Phlox 接缝处理。HUD、图片解码后的主动重绘和原触控循环保留。
+控件树使用递归 `ControlNode` union，Phlox 的开放事件在进入状态树前解码。HUD、图片解码后的主动重绘和原触控循环保留。
 
 PR 保留相对路径的前端构建产物供验收。生产工作流沿用原 CDN 和 rsync 路径，
 上传前核对 main 版本并通过 COS action v1.3.0 内置校验。
@@ -41,7 +41,7 @@ https://github.com/Phlox-GL/phlox-workflow
 
 使用精确配对的正式 Calcit / `@calcit/procs` 0.32.1、Node.js 24、Yarn 4.18.0 与 Vite。源码只维护 `calcit.cirru` / `deps.cirru`；Snapshot 必须通过 Calcit CLI 编辑。正式模块为 Phlox 0.8.0 / Touch Control 0.0.35，传递 JS FFI 0.2.9 / Pointed Prompt 0.0.24。
 
-九个演示页签保持原 shader / 三维投影公式与控制范围；组件返回 `PhloxElement`，控件状态使用字段明确的 Struct，坐标为 `List<Number>`。单 Enum dispatch 检查载荷后构造 nominal Op，ID/时间为 String/Number。开放 store/控件树保留 `Map<Tag, Dynamic>`，不宣称零类型债务。Wind Ring 的指针事件计数补初始化 `:t 0`；原先第一次递增未定义字段。
+九个演示页签保持原 shader / 三维投影公式与控制范围；组件返回 `PhloxElement`，控件状态使用字段明确的 Struct，坐标为 `List<Number>`。单 Enum dispatch 检查载荷后构造 nominal Op，ID/时间为 String/Number。控件树的子节点保留原游标键和绘图状态。Wind Ring 的指针事件计数补初始化 `:t 0`；原先第一次递增未定义字段。
 页签分支由 `case-default` 迁为 `match`，九个分支和默认提示不变；`hud!` 的页面错误/成功提示保留，不改成 `raise`。PR 使用相对资源 URL 并保存短期原始 dist 供验收，不新增部署权限或重复上传校验脚本。
 
 图片输入与 Josefin Sans 加载由 `assets/browser.mjs` 提供真实宿主接口；默认 bricks 纹理由 Vite 打包生成 CDN URL，仍支持用户图片、image=input、移动控制和原8ms控制循环。前端生产路径为 `https://cos-sh.tiye.me/Phlox-GL/shader-kneading/`，Vite base 与 COS prefix 一致。main push 使用 COS action v1.2.0 的 public-base-url 内置 verify；部署任务排队执行，上传前检查提交仍是当前 main，过期提交同时跳过 COS 和服务器同步。PR 只检查和构建，不读取部署 secrets。原服务器 `dist/*` 与 rsync destination 保留，生成HTML使用COS前端URL。
