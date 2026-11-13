@@ -485,7 +485,7 @@
         'dispatch-phlox! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch-phlox! (raw)
             let
-                kind $ enum-definition raw
+                kind $ if (enum? raw) (enum-definition raw) None
               cond
                   = kind $ Some app.schema/NavigationOp
                   dispatch! $ decode-map-as raw 'app.schema/NavigationOp
@@ -500,7 +500,7 @@
                       decode-map-as data $ Map Tag schema/WidgetValue
                   _ $ raise |Unknown-operation
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :state) (:open :decode)
+          :schema $ quote $ Fn Input (-> Unit) (:generics Input) (:features :state)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             if dev? $ load-console-formatter!
